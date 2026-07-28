@@ -85,20 +85,90 @@
     .speed-button:hover { background: #edf5f7; }
     .speed-button.active { background: var(--navy); color: white; }
 
+    .asset-sprite {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .port-marker-shell {
+      position: relative;
+      width: 18px;
+      height: 18px;
+      pointer-events: auto;
+    }
+
     .port-dot {
       width: 18px;
       height: 18px;
+      overflow: hidden;
       border: 4px solid white;
       border-radius: 999px;
       background: var(--terra);
       box-shadow: 0 3px 10px rgba(15, 39, 66, 0.28);
     }
 
+    .port-card {
+      position: absolute;
+      top: 50%;
+      min-width: max-content;
+      max-width: 255px;
+      padding: 5px 9px;
+      border: 1px solid rgba(15, 39, 66, 0.10);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.94);
+      box-shadow: 0 5px 14px rgba(15, 39, 66, 0.16);
+      color: var(--navy);
+      transform: translateY(-50%);
+      transition: padding 120ms ease, box-shadow 120ms ease;
+      pointer-events: auto;
+    }
+
+    .label-right .port-card { left: 28px; }
+    .label-left .port-card { right: 28px; }
+
+    .port-title {
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+
+    .port-details {
+      width: 220px;
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      color: #526b7b;
+      font-size: 11px;
+      line-height: 1.45;
+      transition: max-height 150ms ease, opacity 120ms ease, margin-top 120ms ease;
+    }
+
+    .port-marker-shell:hover .port-card {
+      padding: 9px 11px;
+      box-shadow: 0 10px 24px rgba(15, 39, 66, 0.22);
+    }
+
+    .port-marker-shell:hover .port-details {
+      max-height: 100px;
+      margin-top: 5px;
+      opacity: 1;
+    }
+
+    .port-demand-line { color: #78909d; margin-top: 2px; }
+    .port-ship-line { display: none; margin-top: 4px; color: var(--terra); font-weight: 700; }
+    .port-ship-line.visible { display: block; }
+
     .ship-icon {
       width: 34px;
       height: 34px;
       display: grid;
       place-items: center;
+      overflow: hidden;
       border: 3px solid white;
       border-radius: 12px;
       background: var(--navy);
@@ -129,6 +199,7 @@
       border-radius: 999px;
       background: #e8eff2;
     }
+
     .progress-fill {
       height: 100%;
       width: 0;
@@ -161,6 +232,7 @@
       .topbar { align-items: flex-start; flex-direction: column; }
       .topbar-right { width: 100%; justify-content: space-between; }
       .panel { left: 18px; right: 18px; width: auto; }
+      .port-details { width: 185px; }
     }
   </style>
 </head>
@@ -175,6 +247,7 @@
         <div class="flex flex-wrap items-center gap-2 mt-1">
           <span id="dateText" class="text-sm font-semibold text-slate-600">1 Mayıs 2020 · 08:00</span>
           <span id="seasonBadge" class="pill">Yoğun sezon</span>
+          <span id="timeDemandBadge" class="pill">Gündüz talebi</span>
         </div>
       </div>
     </div>
@@ -237,6 +310,11 @@
       <div class="progress-track"><div id="progressFill" class="progress-fill"></div></div>
     </div>
 
+    <div class="mt-4 rounded-2xl bg-slate-50 px-3 py-2.5 text-[11px] leading-5 text-slate-500">
+      Talep = <strong>0,65</strong> × mevsim × saat × liman yoğunluğu.
+      Gece 23.00–07.00 arasında talep %70 azalır.
+    </div>
+
     <div class="mt-5 pt-4 border-t border-slate-100 flex items-center justify-between gap-4">
       <div class="text-xs text-slate-500 leading-5">
         <strong>1× hızda:</strong> 1 gerçek saniye = 1 oyun dakikası.
@@ -248,9 +326,37 @@
   <div id="notification" class="notification"></div>
 
   <script>
+    const CONFIG = {
+      capacity: 60,
+      tripMinutes: 55,
+      ticketRevenue: 140,
+      tripCost: 600,
+      basePassengersPerMinute: 0.65,
+      nightStartHour: 23,
+      nightEndHour: 7,
+      nightMultiplier: 0.30,
+      saveKey: 'aegean-fleet-minimal-v2',
+      legacySaveKey: 'aegean-fleet-minimal-v1',
+      startDate: new Date(2020, 4, 1, 8, 0, 0, 0)
+    };
+
     const PORTS = {
-      ayvalik: { name: 'Ayvalık', coords: [39.3192, 26.6961], demand: 1.00 },
-      mytilene: { name: 'Midilli', coords: [39.1044, 26.5621], demand: 1.08 }
+      ayvalik: {
+        name: 'Ayvalık',
+        dative: 'Ayvalık’a',
+        coords: [39.3192, 26.6961],
+        intensity: 0.90,
+        destination: 'mytilene',
+        labelSide: 'right'
+      },
+      mytilene: {
+        name: 'Midilli',
+        dative: 'Midilli’ye',
+        coords: [39.1044, 26.5621],
+        intensity: 1.05,
+        destination: 'ayvalik',
+        labelSide: 'left'
+      }
     };
 
     const ROUTE = [
@@ -261,31 +367,93 @@
       [39.1044, 26.5621]
     ];
 
-    const CAPACITY = 60;
-    const TRIP_MINUTES = 55;
-    const TICKET_REVENUE = 140;
-    const TRIP_COST = 600;
-    const SAVE_KEY = 'aegean-fleet-minimal-v1';
-    const START_DATE = new Date(2020, 4, 1, 8, 0, 0, 0);
-
-    const state = {
-      gameMinutes: 0,
-      speed: 1,
-      cash: 10000,
-      fullnessTarget: 80,
-      location: 'ayvalik',
-      destination: 'mytilene',
-      status: 'boarding',
-      passengers: 0,
-      waiting: { ayvalik: 8, mytilene: 5 },
-      demandFractions: { ayvalik: 0, mytilene: 0 },
-      tripProgress: 0,
-      completedTrips: 0
+    // Set a URL later to replace the current CSS/emoji fallback with a PNG or WebP sprite.
+    const ASSET_CATALOG = {
+      port: {
+        url: null,
+        fallbackHtml: '',
+        className: 'port-dot',
+        size: [18, 18],
+        anchor: [9, 9]
+      },
+      ship: {
+        url: null,
+        fallbackHtml: '⛴',
+        className: 'ship-icon',
+        size: [34, 34],
+        anchor: [17, 17]
+      }
     };
 
+    function initialState() {
+      return {
+        gameMinutes: 0,
+        speed: 1,
+        cash: 10000,
+        fullnessTarget: 80,
+        location: 'ayvalik',
+        destination: 'mytilene',
+        status: 'boarding',
+        passengers: 0,
+        waiting: {
+          ayvalik: { mytilene: 8 },
+          mytilene: { ayvalik: 5 }
+        },
+        demandFractions: {
+          ayvalik: { mytilene: 0 },
+          mytilene: { ayvalik: 0 }
+        },
+        tripProgress: 0,
+        completedTrips: 0
+      };
+    }
+
+    const state = initialState();
+    const portMarkers = {};
     let lastFrame = performance.now();
     let lastSavedMinute = -1;
     let notificationTimer = null;
+
+    function assetMarkup(assetKey) {
+      const asset = ASSET_CATALOG[assetKey];
+      const content = asset.url
+        ? `<img class="asset-sprite" src="${asset.url}" alt="" draggable="false" />`
+        : asset.fallbackHtml;
+      return `<div class="${asset.className}">${content}</div>`;
+    }
+
+    function createPortIcon(portKey) {
+      const port = PORTS[portKey];
+      const destination = PORTS[port.destination];
+
+      return L.divIcon({
+        className: '',
+        html: `
+          <div class="port-marker-shell label-${port.labelSide}">
+            ${assetMarkup('port')}
+            <div class="port-card">
+              <div class="port-title">${port.name}</div>
+              <div class="port-details">
+                <div><strong id="portWaiting-${portKey}">0</strong> yolcu ${destination.dative} gitmek için bekliyor.</div>
+                <div id="portRate-${portKey}" class="port-demand-line"></div>
+                <div id="portShip-${portKey}" class="port-ship-line"></div>
+              </div>
+            </div>
+          </div>
+        `,
+        iconSize: ASSET_CATALOG.port.size,
+        iconAnchor: ASSET_CATALOG.port.anchor
+      });
+    }
+
+    function createShipIcon() {
+      return L.divIcon({
+        className: '',
+        html: assetMarkup('ship'),
+        iconSize: ASSET_CATALOG.ship.size,
+        iconAnchor: ASSET_CATALOG.ship.anchor
+      });
+    }
 
     const map = L.map('map', {
       center: [39.22, 26.62],
@@ -302,20 +470,12 @@
 
     L.control.zoom({ position: 'bottomleft' }).addTo(map);
 
-    const portIcon = L.divIcon({
-      className: '',
-      html: '<div class="port-dot"></div>',
-      iconSize: [18, 18],
-      iconAnchor: [9, 9]
-    });
-
-    L.marker(PORTS.ayvalik.coords, { icon: portIcon })
-      .addTo(map)
-      .bindTooltip('Ayvalık', { permanent: true, direction: 'right', offset: [10, 0] });
-
-    L.marker(PORTS.mytilene.coords, { icon: portIcon })
-      .addTo(map)
-      .bindTooltip('Midilli', { permanent: true, direction: 'left', offset: [-10, 0] });
+    for (const portKey of Object.keys(PORTS)) {
+      portMarkers[portKey] = L.marker(PORTS[portKey].coords, {
+        icon: createPortIcon(portKey),
+        zIndexOffset: 400
+      }).addTo(map);
+    }
 
     L.polyline(ROUTE, {
       color: '#315f78',
@@ -325,14 +485,10 @@
       lineCap: 'round'
     }).addTo(map);
 
-    const shipIcon = L.divIcon({
-      className: '',
-      html: '<div class="ship-icon">⛴</div>',
-      iconSize: [34, 34],
-      iconAnchor: [17, 17]
-    });
-
-    const shipMarker = L.marker(PORTS.ayvalik.coords, { icon: shipIcon, zIndexOffset: 1000 })
+    const shipMarker = L.marker(PORTS.ayvalik.coords, {
+      icon: createShipIcon(),
+      zIndexOffset: 1000
+    })
       .addTo(map)
       .bindTooltip('MV Ege', {
         permanent: true,
@@ -344,6 +500,7 @@
     const els = {
       date: document.getElementById('dateText'),
       season: document.getElementById('seasonBadge'),
+      timeDemand: document.getElementById('timeDemandBadge'),
       cash: document.getElementById('cashText'),
       status: document.getElementById('statusText'),
       route: document.getElementById('routeBadge'),
@@ -360,40 +517,104 @@
     };
 
     function currentDate() {
-      return new Date(START_DATE.getTime() + state.gameMinutes * 60000);
+      return new Date(CONFIG.startDate.getTime() + state.gameMinutes * 60000);
     }
 
     function getSeason(date) {
       const month = date.getMonth() + 1;
+
       if ([6, 7, 8].includes(month)) {
-        return { name: 'Çok yoğun sezon', multiplier: 1.55 };
+        return { name: 'Çok yoğun sezon', multiplier: 1.65 };
       }
+
       if ([5, 9].includes(month)) {
         return { name: 'Yoğun sezon', multiplier: 1.00 };
       }
+
       if ([4, 10].includes(month)) {
-        return { name: 'Sakin sezon', multiplier: 0.48 };
+        return { name: 'Sakin sezon', multiplier: 0.55 };
       }
-      return { name: 'Çok sakin sezon', multiplier: 0.22 };
+
+      return { name: 'Çok sakin sezon', multiplier: 0.28 };
+    }
+
+    function getTimeDemand(date) {
+      const hour = date.getHours() + date.getMinutes() / 60;
+      const isNight = hour >= CONFIG.nightStartHour || hour < CONFIG.nightEndHour;
+
+      return isNight
+        ? { name: 'Gece talebi ×0,30', multiplier: CONFIG.nightMultiplier }
+        : { name: 'Gündüz talebi', multiplier: 1.00 };
+    }
+
+    function getDemandBreakdown(portKey, date = currentDate()) {
+      const season = getSeason(date);
+      const timeDemand = getTimeDemand(date);
+      const port = PORTS[portKey];
+      const perMinute = CONFIG.basePassengersPerMinute
+        * season.multiplier
+        * timeDemand.multiplier
+        * port.intensity;
+
+      return {
+        season,
+        timeDemand,
+        portIntensity: port.intensity,
+        perMinute,
+        perHour: perMinute * 60
+      };
+    }
+
+    function getWaiting(originKey, destinationKey = PORTS[originKey].destination) {
+      return state.waiting[originKey]?.[destinationKey] ?? 0;
+    }
+
+    function setWaiting(originKey, destinationKey, value) {
+      if (!state.waiting[originKey]) state.waiting[originKey] = {};
+      state.waiting[originKey][destinationKey] = Math.max(0, value);
+    }
+
+    function getDemandFraction(originKey, destinationKey = PORTS[originKey].destination) {
+      return state.demandFractions[originKey]?.[destinationKey] ?? 0;
+    }
+
+    function setDemandFraction(originKey, destinationKey, value) {
+      if (!state.demandFractions[originKey]) state.demandFractions[originKey] = {};
+      state.demandFractions[originKey][destinationKey] = Math.max(0, value);
     }
 
     function getTargetPassengers() {
-      return Math.max(1, Math.ceil(CAPACITY * state.fullnessTarget / 100));
+      return Math.max(1, Math.ceil(CONFIG.capacity * state.fullnessTarget / 100));
     }
 
     function formatDate(date) {
       const datePart = new Intl.DateTimeFormat('tr-TR', {
-        day: 'numeric', month: 'long', year: 'numeric'
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
       }).format(date);
+
       const timePart = new Intl.DateTimeFormat('tr-TR', {
-        hour: '2-digit', minute: '2-digit', hour12: false
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
       }).format(date);
+
       return `${datePart} · ${timePart}`;
     }
 
     function formatMoney(value) {
       return new Intl.NumberFormat('tr-TR', {
-        style: 'currency', currency: 'TRY', maximumFractionDigits: 0
+        style: 'currency',
+        currency: 'TRY',
+        maximumFractionDigits: 0
+      }).format(value);
+    }
+
+    function formatDecimal(value) {
+      return new Intl.NumberFormat('tr-TR', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
       }).format(value);
     }
 
@@ -407,28 +628,37 @@
     }
 
     function generatePassengers(gameMinutesElapsed) {
-      const season = getSeason(currentDate());
-      const basePassengersPerMinute = 0.78;
+      const date = currentDate();
 
       for (const portKey of Object.keys(PORTS)) {
-        const generated = gameMinutesElapsed * basePassengersPerMinute * season.multiplier * PORTS[portKey].demand;
-        state.demandFractions[portKey] += generated;
+        const port = PORTS[portKey];
+        const destinationKey = port.destination;
+        const demand = getDemandBreakdown(portKey, date);
+        const generated = gameMinutesElapsed * demand.perMinute;
+        const accumulated = getDemandFraction(portKey, destinationKey) + generated;
+        const wholePassengers = Math.floor(accumulated);
 
-        const wholePassengers = Math.floor(state.demandFractions[portKey]);
         if (wholePassengers > 0) {
-          state.waiting[portKey] += wholePassengers;
-          state.demandFractions[portKey] -= wholePassengers;
+          setWaiting(
+            portKey,
+            destinationKey,
+            getWaiting(portKey, destinationKey) + wholePassengers
+          );
         }
+
+        setDemandFraction(portKey, destinationKey, accumulated - wholePassengers);
       }
     }
 
     function boardPassengers() {
       if (state.status !== 'boarding') return;
 
-      const availableSeats = CAPACITY - state.passengers;
-      const boardingNow = Math.min(availableSeats, state.waiting[state.location]);
+      const waitingAtPort = getWaiting(state.location, state.destination);
+      const availableSeats = CONFIG.capacity - state.passengers;
+      const boardingNow = Math.min(availableSeats, waitingAtPort);
+
       state.passengers += boardingNow;
-      state.waiting[state.location] -= boardingNow;
+      setWaiting(state.location, state.destination, waitingAtPort - boardingNow);
 
       if (state.passengers >= getTargetPassengers()) {
         depart();
@@ -437,24 +667,30 @@
 
     function depart() {
       if (state.status !== 'boarding' || state.passengers === 0) return;
+
       state.status = 'sailing';
       state.tripProgress = 0;
-      showNotification(`MV Ege ${PORTS[state.location].name} limanından ${state.passengers} yolcuyla ayrıldı.`);
+      showNotification(
+        `MV Ege ${PORTS[state.location].name} limanından ${state.passengers} yolcuyla ayrıldı.`
+      );
     }
 
     function arrive() {
       const arrivedAt = state.destination;
-      const revenue = state.passengers * TICKET_REVENUE;
-      const profit = revenue - TRIP_COST;
+      const revenue = state.passengers * CONFIG.ticketRevenue;
+      const profit = revenue - CONFIG.tripCost;
 
       state.cash += profit;
       state.completedTrips += 1;
       state.location = arrivedAt;
-      state.destination = arrivedAt === 'ayvalik' ? 'mytilene' : 'ayvalik';
+      state.destination = PORTS[arrivedAt].destination;
       state.status = 'boarding';
       state.tripProgress = 0;
 
-      showNotification(`${PORTS[arrivedAt].name} seferi tamamlandı. Net gelir: ${formatMoney(profit)}.`);
+      showNotification(
+        `${PORTS[arrivedAt].name} seferi tamamlandı. Net gelir: ${formatMoney(profit)}.`
+      );
+
       state.passengers = 0;
       boardPassengers();
     }
@@ -469,15 +705,17 @@
 
       const segmentLengths = [];
       let totalLength = 0;
+
       for (let i = 0; i < points.length - 1; i++) {
-        const a = L.latLng(points[i]);
-        const b = L.latLng(points[i + 1]);
-        const length = a.distanceTo(b);
+        const start = L.latLng(points[i]);
+        const end = L.latLng(points[i + 1]);
+        const length = start.distanceTo(end);
         segmentLengths.push(length);
         totalLength += length;
       }
 
       let targetDistance = totalLength * progress;
+
       for (let i = 0; i < segmentLengths.length; i++) {
         if (targetDistance <= segmentLengths[i]) {
           const ratio = targetDistance / segmentLengths[i];
@@ -486,8 +724,10 @@
             points[i][1] + (points[i + 1][1] - points[i][1]) * ratio
           ];
         }
+
         targetDistance -= segmentLengths[i];
       }
+
       return points[points.length - 1];
     }
 
@@ -500,7 +740,7 @@
       if (state.status === 'boarding') {
         boardPassengers();
       } else {
-        state.tripProgress += gameMinutesElapsed / TRIP_MINUTES;
+        state.tripProgress += gameMinutesElapsed / CONFIG.tripMinutes;
         if (state.tripProgress >= 1) arrive();
       }
 
@@ -511,25 +751,63 @@
       }
     }
 
+    function updatePortCards() {
+      for (const portKey of Object.keys(PORTS)) {
+        const port = PORTS[portKey];
+        const destinationKey = port.destination;
+        const waiting = getWaiting(portKey, destinationKey);
+        const demand = getDemandBreakdown(portKey);
+
+        const waitingElement = document.getElementById(`portWaiting-${portKey}`);
+        const rateElement = document.getElementById(`portRate-${portKey}`);
+        const shipElement = document.getElementById(`portShip-${portKey}`);
+
+        if (waitingElement) waitingElement.textContent = waiting;
+
+        if (rateElement) {
+          rateElement.textContent =
+            `Yoğunluk puanı: ${formatDecimal(port.intensity)} · Şu an ≈ ${Math.round(demand.perHour)} yolcu/saat`;
+        }
+
+        if (shipElement) {
+          const shipIsHere = state.status === 'boarding' && state.location === portKey;
+          shipElement.classList.toggle('visible', shipIsHere);
+          shipElement.textContent = shipIsHere
+            ? `MV Ege limanda: ${state.passengers}/${CONFIG.capacity}`
+            : '';
+        }
+      }
+    }
+
     function render() {
       const date = currentDate();
       const season = getSeason(date);
+      const timeDemand = getTimeDemand(date);
       const targetPassengers = getTargetPassengers();
+      const ayvalikWaiting = getWaiting('ayvalik', 'mytilene');
+      const mytileneWaiting = getWaiting('mytilene', 'ayvalik');
 
       els.date.textContent = formatDate(date);
       els.season.textContent = season.name;
+      els.timeDemand.textContent = timeDemand.name;
       els.cash.textContent = formatMoney(state.cash);
       els.occupancy.textContent = state.passengers;
-      els.ayvalikWaiting.textContent = state.waiting.ayvalik;
-      els.mytileneWaiting.textContent = state.waiting.mytilene;
+      els.ayvalikWaiting.textContent = ayvalikWaiting;
+      els.mytileneWaiting.textContent = mytileneWaiting;
       els.fullnessRange.value = state.fullnessTarget;
       els.fullnessText.textContent = `%${state.fullnessTarget}`;
       els.targetPassenger.textContent = `Hedef: ${targetPassengers} yolcu`;
 
+      updatePortCards();
+
       if (state.status === 'boarding') {
         const locationName = PORTS[state.location].name;
         const destinationName = PORTS[state.destination].name;
-        const targetProgress = Math.min(100, Math.round(state.passengers / targetPassengers * 100));
+        const targetProgress = Math.min(
+          100,
+          Math.round(state.passengers / targetPassengers * 100)
+        );
+
         els.status.textContent = `${locationName}'ta yolcu alıyor`;
         els.route.textContent = `${locationName} → ${destinationName}`;
         els.progressLabel.textContent = `Kalkış hedefi: %${targetProgress}`;
@@ -539,6 +817,7 @@
         const locationName = PORTS[state.location].name;
         const destinationName = PORTS[state.destination].name;
         const journeyPercent = Math.min(100, Math.round(state.tripProgress * 100));
+
         els.status.textContent = `${destinationName} yönünde seyirde`;
         els.route.textContent = `${locationName} → ${destinationName}`;
         els.progressLabel.textContent = `Sefer: %${journeyPercent}`;
@@ -547,24 +826,73 @@
       }
     }
 
+    function migrateDirectionalData(saved) {
+      const migrated = initialState();
+
+      Object.assign(migrated, saved);
+
+      if (typeof saved.waiting?.ayvalik === 'number') {
+        migrated.waiting = {
+          ayvalik: { mytilene: saved.waiting.ayvalik },
+          mytilene: { ayvalik: saved.waiting.mytilene ?? 0 }
+        };
+      } else {
+        migrated.waiting = {
+          ayvalik: {
+            mytilene: saved.waiting?.ayvalik?.mytilene
+              ?? migrated.waiting.ayvalik.mytilene
+          },
+          mytilene: {
+            ayvalik: saved.waiting?.mytilene?.ayvalik
+              ?? migrated.waiting.mytilene.ayvalik
+          }
+        };
+      }
+
+      if (typeof saved.demandFractions?.ayvalik === 'number') {
+        migrated.demandFractions = {
+          ayvalik: { mytilene: saved.demandFractions.ayvalik },
+          mytilene: { ayvalik: saved.demandFractions.mytilene ?? 0 }
+        };
+      } else {
+        migrated.demandFractions = {
+          ayvalik: {
+            mytilene: saved.demandFractions?.ayvalik?.mytilene
+              ?? migrated.demandFractions.ayvalik.mytilene
+          },
+          mytilene: {
+            ayvalik: saved.demandFractions?.mytilene?.ayvalik
+              ?? migrated.demandFractions.mytilene.ayvalik
+          }
+        };
+      }
+
+      return migrated;
+    }
+
     function saveGame() {
-      localStorage.setItem(SAVE_KEY, JSON.stringify(state));
+      localStorage.setItem(CONFIG.saveKey, JSON.stringify(state));
     }
 
     function loadGame() {
       try {
-        const saved = JSON.parse(localStorage.getItem(SAVE_KEY));
-        if (!saved) return;
-        Object.assign(state, saved);
-        state.waiting = { ...state.waiting, ...saved.waiting };
-        state.demandFractions = { ...state.demandFractions, ...saved.demandFractions };
+        const savedText =
+          localStorage.getItem(CONFIG.saveKey)
+          ?? localStorage.getItem(CONFIG.legacySaveKey);
+
+        if (!savedText) return;
+
+        const saved = JSON.parse(savedText);
+        Object.assign(state, migrateDirectionalData(saved));
+        saveGame();
       } catch (error) {
         console.warn('Kayıt okunamadı:', error);
       }
     }
 
     function resetGame() {
-      localStorage.removeItem(SAVE_KEY);
+      localStorage.removeItem(CONFIG.saveKey);
+      localStorage.removeItem(CONFIG.legacySaveKey);
       window.location.reload();
     }
 
@@ -580,7 +908,9 @@
     document.querySelectorAll('.speed-button').forEach((button) => {
       button.addEventListener('click', () => {
         state.speed = Number(button.dataset.speed);
-        document.querySelectorAll('.speed-button').forEach((item) => item.classList.remove('active'));
+        document.querySelectorAll('.speed-button').forEach((item) => {
+          item.classList.remove('active');
+        });
         button.classList.add('active');
         saveGame();
       });
@@ -588,7 +918,10 @@
 
     function syncSpeedButtons() {
       document.querySelectorAll('.speed-button').forEach((button) => {
-        button.classList.toggle('active', Number(button.dataset.speed) === state.speed);
+        button.classList.toggle(
+          'active',
+          Number(button.dataset.speed) === state.speed
+        );
       });
     }
 
@@ -596,7 +929,7 @@
       const realSeconds = Math.min(0.25, (now - lastFrame) / 1000);
       lastFrame = now;
 
-      // Temel zaman kuralı: 1x hızda 1 gerçek saniye = 1 oyun dakikası.
+      // 1x hızda 1 gerçek saniye = 1 oyun dakikası.
       updateSimulation(realSeconds * state.speed);
       render();
       requestAnimationFrame(frame);
