@@ -1,0 +1,30 @@
+{
+  "ayvalik": {
+    "id": "ayvalik",
+    "name": "Ayvalık",
+    "type": "port",
+    "terminal": [39.3192, 26.6961],
+    "seaGate": [39.2995, 26.6865],
+    "intensity": 0.55
+  },
+  "mytilene": {
+    "id": "mytilene",
+    "name": "Midilli",
+    "type": "port",
+    "terminal": [39.1044, 26.5621],
+    "seaGate": [39.1125, 26.5715],
+    "intensity": 0.7
+  },
+  "istanbul": {
+    "id": "istanbul",
+    "name": "İstanbul",
+    "type": "airport",
+    "terminal": [41.2753, 28.7519]
+  },
+  "athens": {
+    "id": "athens",
+    "name": "Atina",
+    "type": "airport",
+    "terminal": [37.9364, 23.9475]
+  }
+}
