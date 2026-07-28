@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "generatedAt": "2026-07-28T00:00:00.000Z",
+  "routes": {
+    "ayvalik-mytilene": {
+      "id": "ayvalik-mytilene",
+      "mode": "sea",
+      "origin": "ayvalik",
+      "destination": "mytilene",
+      "distanceKm": 26.98,
+      "durationMinutes": 55,
+      "source": "navigation-graph",
+      "nodePath": [
+        "ayvalik-terminal",
+        "ayvalik-gate",
+        "ayvalik-bay-south",
+        "cunda-south-east",
+        "cunda-south-west",
+        "east-lesvos-north",
+        "east-lesvos-mid",
+        "mytilene-gate",
+        "mytilene-terminal"
+      ],
+      "waypoints": [
+        [39.3192, 26.6961],
+        [39.2995, 26.6865],
+        [39.274, 26.672],
+        [39.248, 26.648],
+        [39.222, 26.616],
+        [39.185, 26.598],
+        [39.145, 26.585],
+        [39.1125, 26.5715],
+        [39.1044, 26.5621]
+      ]
+    }
+  }
+}
