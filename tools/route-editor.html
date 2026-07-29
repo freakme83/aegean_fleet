@@ -3,84 +3,28 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Aegean Fleet · Rota Editörü v3</title>
+<title>Aegean Fleet · Rota Editörü v4</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
-:root{--n:#0f2742;--t:#c96c4a;--g:#19795d}
-*{box-sizing:border-box}html,body,#map{margin:0;width:100%;height:100%;font-family:system-ui,sans-serif;color:var(--n)}
-body{overflow:hidden}#map{position:fixed;inset:0}
-.bar,.panel{position:fixed;z-index:1200;background:rgba(255,255,255,.97);border:1px solid rgba(15,39,66,.14);box-shadow:0 14px 34px rgba(15,39,66,.18);backdrop-filter:blur(12px)}
-.bar{top:16px;left:16px;right:16px;padding:12px;border-radius:18px;display:flex;gap:9px;align-items:center;flex-wrap:wrap}
-.bar h1{font-size:17px;margin:0 8px 0 0}.version{font-size:11px;font-weight:800;padding:6px 8px;border-radius:999px;background:#fff3df;color:#94601c}
-button{height:38px;border:1px solid #d7e1e6;border-radius:10px;background:#fff;color:var(--n);font-weight:750;padding:0 12px;cursor:pointer}
-button.add{background:#e9f6f1;color:var(--g);border-color:#b8ddcf}button.add.on{background:var(--g);color:#fff}
-.status{margin-left:auto;padding:7px 10px;border-radius:999px;background:#edf5f7;font-size:12px;font-weight:700}
-.hint{display:none;width:100%;padding:9px 12px;border-radius:11px;background:#e9f6f1;color:#155e49;font-size:12px;font-weight:700}.hint.show{display:block}
-.panel{right:16px;bottom:16px;width:min(390px,calc(100vw - 32px));padding:15px;border-radius:18px}
-.panel h2{font-size:16px;margin:0 0 7px}.help{font-size:12px;line-height:1.5;color:#607482}
-.metrics{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:11px 0}.metric{padding:9px;border-radius:12px;background:#f3f7f8}
-.metric small{display:block;font-size:10px;color:#80909a;font-weight:800;text-transform:uppercase}.metric strong{display:block;margin-top:3px;font-size:17px}
-textarea{width:100%;height:125px;border:1px solid #d7e1e6;border-radius:12px;padding:9px;font:11px/1.45 monospace;background:#f8fafb}
-.actions{display:flex;gap:8px;margin-top:9px}.primary{background:var(--n);color:#fff}.danger{color:#b33d3d}
-.point{width:25px;height:25px;display:grid;place-items:center;border:3px solid #fff;border-radius:50%;background:var(--t);color:#fff;font-size:10px;font-weight:800;box-shadow:0 3px 10px rgba(15,39,66,.35)}.point.lock{background:var(--n)}
-.port-label{padding:6px 10px;border:0;border-radius:10px;background:#fff;color:var(--n);font-size:12px;font-weight:800;box-shadow:0 4px 12px rgba(15,39,66,.2)}.port-label:before{display:none}
-.ship{width:30px;height:30px;display:grid;place-items:center;border:3px solid #fff;border-radius:11px;background:var(--n);color:#fff}
-.add-cursor #map{cursor:crosshair!important}
-@media(max-width:850px){.bar h1{width:100%}.status{width:100%;margin-left:0}.panel{left:16px;width:auto;max-height:45vh;overflow:auto}}
+:root{--n:#0f2742;--t:#c96c4a;--g:#19795d}*{box-sizing:border-box}html,body,#map{margin:0;width:100%;height:100%;font-family:system-ui,sans-serif;color:var(--n)}body{overflow:hidden}#map{position:fixed;inset:0}.bar,.panel{position:fixed;z-index:1200;background:rgba(255,255,255,.97);border:1px solid rgba(15,39,66,.14);box-shadow:0 14px 34px rgba(15,39,66,.18);backdrop-filter:blur(12px)}.bar{top:16px;left:16px;right:16px;padding:12px;border-radius:18px;display:flex;gap:9px;align-items:center;flex-wrap:wrap}.bar h1{font-size:17px;margin:0 8px 0 0}.version{font-size:11px;font-weight:800;padding:6px 8px;border-radius:999px;background:#fff3df;color:#94601c}select,button{height:38px;border:1px solid #d7e1e6;border-radius:10px;background:#fff;color:var(--n);font-weight:750;padding:0 12px}button{cursor:pointer}button.add{background:#e9f6f1;color:var(--g);border-color:#b8ddcf}button.add.on{background:var(--g);color:#fff}.status{margin-left:auto;padding:7px 10px;border-radius:999px;background:#edf5f7;font-size:12px;font-weight:700}.hint{display:none;width:100%;padding:9px 12px;border-radius:11px;background:#e9f6f1;color:#155e49;font-size:12px;font-weight:700}.hint.show{display:block}.panel{right:16px;bottom:16px;width:min(390px,calc(100vw - 32px));padding:15px;border-radius:18px}.panel h2{font-size:16px;margin:0 0 7px}.help{font-size:12px;line-height:1.5;color:#607482}.metrics{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:11px 0}.metric{padding:9px;border-radius:12px;background:#f3f7f8}.metric small{display:block;font-size:10px;color:#80909a;font-weight:800;text-transform:uppercase}.metric strong{display:block;margin-top:3px;font-size:17px}textarea{width:100%;height:125px;border:1px solid #d7e1e6;border-radius:12px;padding:9px;font:11px/1.45 monospace;background:#f8fafb}.actions{display:flex;gap:8px;margin-top:9px}.primary{background:var(--n);color:#fff}.danger{color:#b33d3d}.point{width:25px;height:25px;display:grid;place-items:center;border:3px solid #fff;border-radius:50%;background:var(--t);color:#fff;font-size:10px;font-weight:800;box-shadow:0 3px 10px rgba(15,39,66,.35)}.point.lock{background:var(--n)}.port-label{padding:6px 10px;border:0;border-radius:10px;background:#fff;color:var(--n);font-size:12px;font-weight:800;box-shadow:0 4px 12px rgba(15,39,66,.2)}.port-label:before{display:none}.ship{width:30px;height:30px;display:grid;place-items:center;border:3px solid #fff;border-radius:11px;background:var(--n);color:#fff}.add-cursor #map{cursor:crosshair!important}@media(max-width:850px){.bar h1{width:100%}.status{width:100%;margin-left:0}.panel{left:16px;width:auto;max-height:45vh;overflow:auto}}
 </style>
 </head>
 <body>
 <div id="map"></div>
-<div class="bar">
-<h1>Rota Editörü</h1><span class="version">v3 · bağımsız</span>
-<button id="add" class="add">＋ Waypoint ekle</button>
-<button id="undo">Geri al</button>
-<button id="clear" class="danger">Ara noktaları temizle</button>
-<button id="reset">Başlangıç rotasını yükle</button>
-<button id="test">Rotayı test et</button>
-<span id="status" class="status">Ayvalık → Midilli</span>
-<div id="hint" class="hint">Waypoint ekleme açık. Haritada istediğin deniz noktasına tıkla.</div>
-</div>
-<aside class="panel">
-<h2>Ayvalık → Midilli</h2>
-<div class="help">“Waypoint ekle”ye basıp haritaya tıkla. Turuncu noktaları sürükle, sağ tıkla sil. A ve B liman noktaları kilitlidir.</div>
-<div class="metrics"><div class="metric"><small>Waypoint</small><strong id="count">0</strong></div><div class="metric"><small>Mesafe</small><strong id="distance">0 km</strong></div></div>
-<textarea id="json" spellcheck="false"></textarea>
-<div class="actions"><button id="copy" class="primary">JSON’u kopyala</button><button id="download">JSON indir</button></div>
-</aside>
+<div class="bar"><h1>Rota Editörü</h1><span class="version">v4 · çoklu rota</span><select id="routeSelect"></select><button id="add" class="add">＋ Waypoint ekle</button><button id="undo">Geri al</button><button id="clear" class="danger">Ara noktaları temizle</button><button id="reset">Başlangıç rotasını yükle</button><button id="test">Rotayı test et</button><span id="status" class="status"></span><div id="hint" class="hint">Waypoint ekleme açık. Haritada istediğin deniz noktasına tıkla.</div></div>
+<aside class="panel"><h2 id="routeTitle"></h2><div class="help">Rotayı üst menüden seç. “Waypoint ekle”ye basıp haritaya tıkla. Turuncu noktaları sürükle, sağ tıkla sil. A ve B liman noktaları kilitlidir.</div><div class="metrics"><div class="metric"><small>Waypoint</small><strong id="count">0</strong></div><div class="metric"><small>Mesafe</small><strong id="distance">0 km</strong></div></div><textarea id="json" spellcheck="false"></textarea><div class="actions"><button id="copy" class="primary">JSON’u kopyala</button><button id="download">JSON indir</button></div></aside>
 <script>
-const INITIAL=[
-[39.3192,26.6961],[39.2995,26.6865],[39.274,26.672],[39.248,26.648],
-[39.222,26.616],[39.185,26.598],[39.145,26.585],[39.1125,26.5715],[39.1044,26.5621]
-];
-const $=id=>document.getElementById(id);
-const E={add:$('add'),undo:$('undo'),clear:$('clear'),reset:$('reset'),test:$('test'),status:$('status'),hint:$('hint'),count:$('count'),distance:$('distance'),json:$('json')};
-const map=L.map('map',{center:[39.22,26.62],zoom:10,minZoom:5,maxZoom:15,zoomControl:false,attributionControl:false});
-L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png',{maxZoom:15}).addTo(map);
-L.control.zoom({position:'bottomleft'}).addTo(map);
-let points=INITIAL.map(p=>[...p]),markers=[],labels=[],history=[],addMode=false,ship=null,testFrame=null;
-const line=L.polyline([],{color:'#315f78',weight:4,opacity:.9,dashArray:'10 9'}).addTo(map);
-function icon(i,locked){return L.divIcon({className:'',html:`<div class="point ${locked?'lock':''}">${locked?(i===0?'A':'B'):i}</div>`,iconSize:[25,25],iconAnchor:[12,12]})}
-function snapshot(){history.push(points.map(p=>[...p]));if(history.length>80)history.shift()}
-function km(){let d=0;for(let i=0;i<points.length-1;i++)d+=map.distance(points[i],points[i+1]);return d/1000}
-function output(){return{id:'ayvalik-mytilene',mode:'sea',origin:'ayvalik',destination:'mytilene',distanceKm:+km().toFixed(1),durationMinutes:55,waypoints:points.map(p=>p.map(v=>+v.toFixed(6)))}}
-function setAdd(v){addMode=v;E.add.classList.toggle('on',v);E.add.textContent=v?'✓ Waypoint ekleme açık':'＋ Waypoint ekle';E.hint.classList.toggle('show',v);document.body.classList.toggle('add-cursor',v);E.status.textContent=v?'Haritada bir deniz noktasına tıkla':'Ayvalık → Midilli'}
-function renderLabels(){labels.forEach(x=>x.remove());labels=[];[['Ayvalık',0,'right','#0f2742'],['Midilli',points.length-1,'left','#c96c4a']].forEach(([name,i,dir,color])=>{const c=L.circleMarker(points[i],{radius:8,color:'#fff',weight:3,fillColor:color,fillOpacity:1,interactive:false}).addTo(map);c.bindTooltip(name,{permanent:true,direction:dir,offset:dir==='right'?[12,0]:[-12,0],className:'port-label'}).openTooltip();labels.push(c)})}
-function render(){markers.forEach(x=>x.remove());markers=[];points.forEach((p,i)=>{const locked=i===0||i===points.length-1;const m=L.marker(p,{icon:icon(i,locked),draggable:!locked,zIndexOffset:800}).addTo(map);if(!locked){m.on('dragstart',snapshot);m.on('drag',e=>{const a=e.target.getLatLng();points[i]=[a.lat,a.lng];line.setLatLngs(points);update()});m.on('contextmenu',()=>{snapshot();points.splice(i,1);render()})}markers.push(m)});line.setLatLngs(points);renderLabels();update()}
-function update(){E.count.textContent=points.length;E.distance.textContent=`${km().toFixed(1)} km`;E.json.value=JSON.stringify(output(),null,2)}
-function fit(){map.fitBounds(L.latLngBounds(points),{paddingTopLeft:[80,110],paddingBottomRight:[430,120]})}
-function nearest(ll){const cp=map.latLngToLayerPoint(ll);let bi=1,bd=Infinity;for(let i=0;i<points.length-1;i++){const a=map.latLngToLayerPoint(points[i]),b=map.latLngToLayerPoint(points[i+1]),dx=b.x-a.x,dy=b.y-a.y,den=dx*dx+dy*dy||1,t=Math.max(0,Math.min(1,((cp.x-a.x)*dx+(cp.y-a.y)*dy)/den)),x=a.x+dx*t,y=a.y+dy*t,d=Math.hypot(cp.x-x,cp.y-y);if(d<bd){bd=d;bi=i+1}}return bi}
-map.on('click',e=>{if(!addMode)return;snapshot();points.splice(nearest(e.latlng),0,[e.latlng.lat,e.latlng.lng]);render()});
-function pos(pr){const lens=[];let total=0;for(let i=0;i<points.length-1;i++){const l=map.distance(points[i],points[i+1]);lens.push(l);total+=l}let target=total*pr;for(let i=0;i<lens.length;i++){if(target<=lens[i]){const r=target/lens[i];return[points[i][0]+(points[i+1][0]-points[i][0])*r,points[i][1]+(points[i+1][1]-points[i][1])*r]}target-=lens[i]}return points[points.length-1]}
-E.add.onclick=()=>setAdd(!addMode);
-E.undo.onclick=()=>{const p=history.pop();if(p){points=p;render()}};
-E.clear.onclick=()=>{snapshot();points=[points[0],points[points.length-1]];render()};
-E.reset.onclick=()=>{snapshot();points=INITIAL.map(p=>[...p]);render();fit()};
-E.test.onclick=()=>{setAdd(false);if(ship)ship.remove();ship=L.marker(points[0],{icon:L.divIcon({className:'',html:'<div class="ship">⛴</div>',iconSize:[30,30],iconAnchor:[15,15]})}).addTo(map);const start=performance.now();if(testFrame)cancelAnimationFrame(testFrame);const frame=now=>{const p=Math.min(1,(now-start)/6500);ship.setLatLng(pos(p));if(p<1)testFrame=requestAnimationFrame(frame)};testFrame=requestAnimationFrame(frame)};
-E.copy.onclick=async()=>{try{await navigator.clipboard.writeText(E.json.value)}catch{E.json.select();document.execCommand('copy')}};
-E.download.onclick=()=>{const u=URL.createObjectURL(new Blob([E.json.value],{type:'application/json'}));const a=document.createElement('a');a.href=u;a.download='ayvalik-mytilene.json';a.click();URL.revokeObjectURL(u)};
-render();fit();setAdd(false);
+const ROUTES={
+'ayvalik-mytilene':{id:'ayvalik-mytilene',origin:'ayvalik',destination:'mytilene',originName:'Ayvalık',destinationName:'Midilli',durationMinutes:55,waypoints:[[39.3192,26.6961],[39.32394,26.670685],[39.326264,26.658325],[39.322878,26.638412],[39.323144,26.619873],[39.253525,26.595154],[39.218423,26.593094],[39.185,26.598],[39.145,26.585],[39.1125,26.5715],[39.101725,26.563869],[39.1044,26.5621]]},
+'cesme-mytilene':{id:'cesme-mytilene',origin:'cesme',destination:'mytilene',originName:'Çeşme',destinationName:'Midilli',durationMinutes:150,waypoints:[[38.325,26.295556],[38.323,26.27],[38.36,26.225],[38.46,26.205],[38.58,26.205],[38.69,26.24],[38.81,26.34],[38.94,26.45],[39.04,26.525],[39.1044,26.5621]]},
+'ayvalik-cesme':{id:'ayvalik-cesme',origin:'ayvalik',destination:'cesme',originName:'Ayvalık',destinationName:'Çeşme',durationMinutes:205,waypoints:[[39.3192,26.6961],[39.32394,26.670685],[39.326264,26.658325],[39.322878,26.638412],[39.323144,26.619873],[39.253525,26.595154],[39.218423,26.593094],[39.185,26.598],[39.145,26.585],[39.1125,26.5715],[39.101725,26.563869],[39.04,26.525],[38.94,26.45],[38.81,26.34],[38.69,26.24],[38.58,26.205],[38.46,26.205],[38.36,26.225],[38.323,26.27],[38.325,26.295556]]}
+};
+const $=id=>document.getElementById(id),E={routeSelect:$('routeSelect'),routeTitle:$('routeTitle'),add:$('add'),undo:$('undo'),clear:$('clear'),reset:$('reset'),test:$('test'),status:$('status'),hint:$('hint'),count:$('count'),distance:$('distance'),json:$('json')};
+const map=L.map('map',{center:[39,26.4],zoom:9,minZoom:5,maxZoom:15,zoomControl:false,attributionControl:false});L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png',{maxZoom:15}).addTo(map);L.control.zoom({position:'bottomleft'}).addTo(map);
+let active=ROUTES['ayvalik-mytilene'],points=[],markers=[],labels=[],history=[],addMode=false,ship=null,testFrame=null;const line=L.polyline([],{color:'#315f78',weight:4,opacity:.9,dashArray:'10 9'}).addTo(map);
+function icon(i,locked){return L.divIcon({className:'',html:`<div class="point ${locked?'lock':''}">${locked?(i===0?'A':'B'):i}</div>`,iconSize:[25,25],iconAnchor:[12,12]})}function snapshot(){history.push(points.map(p=>[...p]));if(history.length>80)history.shift()}function km(){let d=0;for(let i=0;i<points.length-1;i++)d+=map.distance(points[i],points[i+1]);return d/1000}function output(){return{id:active.id,mode:'sea',origin:active.origin,destination:active.destination,distanceKm:+km().toFixed(1),durationMinutes:active.durationMinutes,source:'manual-route-editor',waypoints:points.map(p=>p.map(v=>+v.toFixed(6)))}}function setAdd(v){addMode=v;E.add.classList.toggle('on',v);E.add.textContent=v?'✓ Waypoint ekleme açık':'＋ Waypoint ekle';E.hint.classList.toggle('show',v);document.body.classList.toggle('add-cursor',v);E.status.textContent=v?'Haritada bir deniz noktasına tıkla':`${active.originName} → ${active.destinationName}`}function renderLabels(){labels.forEach(x=>x.remove());labels=[];[[active.originName,0,'right','#0f2742'],[active.destinationName,points.length-1,'left','#c96c4a']].forEach(([name,i,dir,color])=>{const c=L.circleMarker(points[i],{radius:8,color:'#fff',weight:3,fillColor:color,fillOpacity:1,interactive:false}).addTo(map);c.bindTooltip(name,{permanent:true,direction:dir,offset:dir==='right'?[12,0]:[-12,0],className:'port-label'}).openTooltip();labels.push(c)})}function render(){markers.forEach(x=>x.remove());markers=[];points.forEach((p,i)=>{const locked=i===0||i===points.length-1,m=L.marker(p,{icon:icon(i,locked),draggable:!locked,zIndexOffset:800}).addTo(map);if(!locked){m.on('dragstart',snapshot);m.on('drag',e=>{const a=e.target.getLatLng();points[i]=[a.lat,a.lng];line.setLatLngs(points);update()});m.on('contextmenu',()=>{snapshot();points.splice(i,1);render()})}markers.push(m)});line.setLatLngs(points);renderLabels();update()}function update(){E.count.textContent=points.length;E.distance.textContent=`${km().toFixed(1)} km`;E.json.value=JSON.stringify(output(),null,2);E.routeTitle.textContent=`${active.originName} → ${active.destinationName}`}function fit(){map.fitBounds(L.latLngBounds(points),{paddingTopLeft:[80,110],paddingBottomRight:[430,120]})}function loadRoute(id){active=ROUTES[id];points=active.waypoints.map(p=>[...p]);history=[];setAdd(false);render();fit()}function nearest(ll){const cp=map.latLngToLayerPoint(ll);let bi=1,bd=Infinity;for(let i=0;i<points.length-1;i++){const a=map.latLngToLayerPoint(points[i]),b=map.latLngToLayerPoint(points[i+1]),dx=b.x-a.x,dy=b.y-a.y,den=dx*dx+dy*dy||1,t=Math.max(0,Math.min(1,((cp.x-a.x)*dx+(cp.y-a.y)*dy)/den)),x=a.x+dx*t,y=a.y+dy*t,d=Math.hypot(cp.x-x,cp.y-y);if(d<bd){bd=d;bi=i+1}}return bi}map.on('click',e=>{if(!addMode)return;snapshot();points.splice(nearest(e.latlng),0,[e.latlng.lat,e.latlng.lng]);render()});function pos(pr){const lens=[];let total=0;for(let i=0;i<points.length-1;i++){const l=map.distance(points[i],points[i+1]);lens.push(l);total+=l}let target=total*pr;for(let i=0;i<lens.length;i++){if(target<=lens[i]){const r=target/lens[i];return[points[i][0]+(points[i+1][0]-points[i][0])*r,points[i][1]+(points[i+1][1]-points[i][1])*r]}target-=lens[i]}return points[points.length-1]}
+E.routeSelect.innerHTML=Object.values(ROUTES).map(r=>`<option value="${r.id}">${r.originName} → ${r.destinationName}</option>`).join('');E.routeSelect.onchange=e=>loadRoute(e.target.value);E.add.onclick=()=>setAdd(!addMode);E.undo.onclick=()=>{const p=history.pop();if(p){points=p;render()}};E.clear.onclick=()=>{snapshot();points=[points[0],points[points.length-1]];render()};E.reset.onclick=()=>{snapshot();points=active.waypoints.map(p=>[...p]);render();fit()};E.test.onclick=()=>{setAdd(false);if(ship)ship.remove();ship=L.marker(points[0],{icon:L.divIcon({className:'',html:'<div class="ship">⛴</div>',iconSize:[30,30],iconAnchor:[15,15]})}).addTo(map);const start=performance.now();if(testFrame)cancelAnimationFrame(testFrame);const frame=now=>{const p=Math.min(1,(now-start)/6500);ship.setLatLng(pos(p));if(p<1)testFrame=requestAnimationFrame(frame)};testFrame=requestAnimationFrame(frame)};E.copy.onclick=async()=>{try{await navigator.clipboard.writeText(E.json.value)}catch{E.json.select();document.execCommand('copy')}};E.download.onclick=()=>{const u=URL.createObjectURL(new Blob([E.json.value],{type:'application/json'})),a=document.createElement('a');a.href=u;a.download=`${active.id}.json`;a.click();URL.revokeObjectURL(u)};loadRoute(active.id);
 </script>
 </body>
 </html>
