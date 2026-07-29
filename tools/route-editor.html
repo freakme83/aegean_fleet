@@ -7,18 +7,22 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
-    :root { --navy:#0f2742; --terra:#c96c4a; --sea:#b9dce3; }
+    :root { --navy:#0f2742; --terra:#c96c4a; --sea:#b9dce3; --green:#19795d; }
     * { box-sizing:border-box; }
     html, body { width:100%; height:100%; margin:0; overflow:hidden; font-family:Inter,system-ui,sans-serif; color:var(--navy); }
     #map { position:fixed; inset:0; background:var(--sea); }
-    .toolbar { position:fixed; z-index:1000; top:16px; left:16px; right:16px; display:flex; gap:10px; align-items:center; flex-wrap:wrap; padding:12px; border:1px solid rgba(15,39,66,.14); border-radius:18px; background:rgba(255,255,255,.94); backdrop-filter:blur(14px); box-shadow:0 14px 34px rgba(15,39,66,.16); }
+    .toolbar { position:fixed; z-index:1200; top:16px; left:16px; right:16px; display:flex; gap:10px; align-items:center; flex-wrap:wrap; padding:12px; border:1px solid rgba(15,39,66,.14); border-radius:18px; background:rgba(255,255,255,.97); backdrop-filter:blur(14px); box-shadow:0 14px 34px rgba(15,39,66,.16); }
     .toolbar h1 { margin:0 8px 0 0; font-size:17px; }
-    select, button { height:36px; border:1px solid #d7e1e6; border-radius:10px; background:white; color:var(--navy); font-weight:700; padding:0 12px; }
+    select, button { height:38px; border:1px solid #d7e1e6; border-radius:10px; background:white; color:var(--navy); font-weight:700; padding:0 12px; }
     button { cursor:pointer; }
     button.primary { background:var(--navy); color:white; border-color:var(--navy); }
     button.danger { color:#b33d3d; }
+    button.add-mode { background:#e9f6f1; color:var(--green); border-color:#b8ddcf; }
+    button.add-mode.active { background:var(--green); color:white; border-color:var(--green); box-shadow:0 0 0 3px rgba(25,121,93,.16); }
     .status { margin-left:auto; padding:7px 10px; border-radius:999px; background:#edf5f7; color:#526b79; font-size:12px; font-weight:700; }
-    .panel { position:fixed; z-index:1000; right:16px; bottom:16px; width:min(390px,calc(100vw - 32px)); padding:16px; border:1px solid rgba(15,39,66,.14); border-radius:18px; background:rgba(255,255,255,.95); backdrop-filter:blur(14px); box-shadow:0 16px 40px rgba(15,39,66,.18); }
+    .mode-hint { width:100%; display:none; padding:9px 12px; border-radius:12px; background:#e9f6f1; color:#155e49; font-size:12px; font-weight:700; }
+    .mode-hint.visible { display:block; }
+    .panel { position:fixed; z-index:1100; right:16px; bottom:16px; width:min(390px,calc(100vw - 32px)); padding:16px; border:1px solid rgba(15,39,66,.14); border-radius:18px; background:rgba(255,255,255,.96); backdrop-filter:blur(14px); box-shadow:0 16px 40px rgba(15,39,66,.18); }
     .panel h2 { margin:0 0 8px; font-size:16px; }
     .help { font-size:12px; line-height:1.55; color:#607482; }
     .metrics { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:12px 0; }
@@ -30,26 +34,29 @@
     .point-icon { width:24px; height:24px; display:grid; place-items:center; border-radius:999px; border:3px solid white; background:var(--terra); color:white; font-size:10px; font-weight:800; box-shadow:0 3px 10px rgba(15,39,66,.3); }
     .point-icon.locked { background:var(--navy); }
     .ship-icon { width:30px; height:30px; display:grid; place-items:center; border:3px solid white; border-radius:12px; background:var(--navy); color:white; font-size:16px; box-shadow:0 4px 12px rgba(15,39,66,.3); }
-    .toast { position:fixed; z-index:1100; left:16px; bottom:16px; padding:11px 14px; border-radius:12px; background:rgba(15,39,66,.94); color:white; font-size:12px; font-weight:700; opacity:0; transform:translateY(8px); transition:.18s; pointer-events:none; }
+    .port-label { padding:6px 10px; border:0; border-radius:10px; background:rgba(255,255,255,.96); box-shadow:0 4px 12px rgba(15,39,66,.18); color:var(--navy); font-size:12px; font-weight:800; }
+    .port-label::before { display:none; }
+    .toast { position:fixed; z-index:1300; left:16px; bottom:16px; padding:11px 14px; border-radius:12px; background:rgba(15,39,66,.94); color:white; font-size:12px; font-weight:700; opacity:0; transform:translateY(8px); transition:.18s; pointer-events:none; }
     .toast.visible { opacity:1; transform:translateY(0); }
-    @media(max-width:800px){ .status{width:100%;margin-left:0}.panel{left:16px;right:16px;width:auto}.toolbar{right:16px} }
+    .adding-waypoint .leaflet-container, .adding-waypoint #map { cursor:crosshair !important; }
+    @media(max-width:900px){ .status{width:100%;margin-left:0}.panel{left:16px;right:16px;width:auto;max-height:46vh;overflow:auto}.toolbar{right:16px}.toolbar h1{width:100%} }
   </style>
 </head>
 <body>
   <div id="map"></div>
   <div class="toolbar">
     <h1>Rota Editörü</h1>
-    <select id="routeSelect"></select>
+    <select id="routeSelect" aria-label="Rota seç"></select>
+    <button id="addButton" class="add-mode">＋ Waypoint ekle</button>
     <button id="undoButton">Geri al</button>
     <button id="clearButton" class="danger">Ara noktaları temizle</button>
     <button id="testButton">Rotayı test et</button>
     <span id="statusText" class="status">Yükleniyor…</span>
+    <div id="modeHint" class="mode-hint">Waypoint ekleme açık: haritada deniz üzerine tıkla. Bitirmek için “Waypoint ekle” düğmesine tekrar bas.</div>
   </div>
   <aside class="panel">
     <h2>Manuel waypoint düzenleme</h2>
-    <div class="help">
-      Haritada deniz üzerine tıklayarak yeni waypoint ekle. Turuncu noktaları sürükle. Bir ara noktaya sağ tıklayarak sil. Başlangıç ve bitiş noktaları kilitlidir.
-    </div>
+    <div class="help">Önce <strong>Waypoint ekle</strong> düğmesine bas, sonra haritada deniz üzerine tıkla. Turuncu noktaları sürükle; bir ara noktaya sağ tıklayarak sil. Başlangıç ve bitiş noktaları kilitlidir.</div>
     <div class="metrics">
       <div class="metric"><small>Waypoint</small><strong id="pointCount">0</strong></div>
       <div class="metric"><small>Yaklaşık mesafe</small><strong id="distanceText">0 km</strong></div>
@@ -69,6 +76,8 @@
     const distanceText = document.getElementById('distanceText');
     const jsonOutput = document.getElementById('jsonOutput');
     const toastElement = document.getElementById('toast');
+    const addButton = document.getElementById('addButton');
+    const modeHint = document.getElementById('modeHint');
 
     const map = L.map('map', { center:[39.22,26.62], zoom:10, minZoom:5, maxZoom:15, zoomControl:false, attributionControl:false });
     L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png', { maxZoom:15 }).addTo(map);
@@ -79,10 +88,12 @@
     let activeRoute = null;
     let points = [];
     let markers = [];
-    let polyline = L.polyline([], { color:'#315f78', weight:4, opacity:.85, dashArray:'10 9', lineCap:'round' }).addTo(map);
+    let portMarkers = [];
+    const polyline = L.polyline([], { color:'#315f78', weight:4, opacity:.85, dashArray:'10 9', lineCap:'round' }).addTo(map);
     let history = [];
     let shipMarker = null;
     let testFrame = null;
+    let addMode = false;
 
     function toast(message) {
       toastElement.textContent = message;
@@ -91,13 +102,11 @@
       toastElement.timer = setTimeout(() => toastElement.classList.remove('visible'), 2400);
     }
 
+    function portName(key) { return ports[key]?.name || key; }
+
     function pointIcon(index, locked) {
       const label = locked ? (index === 0 ? 'A' : 'B') : index;
-      return L.divIcon({
-        className:'',
-        html:`<div class="point-icon ${locked ? 'locked' : ''}">${label}</div>`,
-        iconSize:[24,24], iconAnchor:[12,12]
-      });
+      return L.divIcon({ className:'', html:`<div class="point-icon ${locked ? 'locked' : ''}">${label}</div>`, iconSize:[24,24], iconAnchor:[12,12] });
     }
 
     function shipIcon() {
@@ -105,15 +114,13 @@
     }
 
     function snapshot() {
-      history.push(points.map(p => [...p]));
+      history.push(points.map(point => [...point]));
       if (history.length > 80) history.shift();
     }
 
     function distanceKm(routePoints) {
       let total = 0;
-      for (let i = 0; i < routePoints.length - 1; i++) {
-        total += L.latLng(routePoints[i]).distanceTo(L.latLng(routePoints[i + 1]));
-      }
+      for (let i = 0; i < routePoints.length - 1; i++) total += L.latLng(routePoints[i]).distanceTo(L.latLng(routePoints[i + 1]));
       return total / 1000;
     }
 
@@ -129,10 +136,30 @@
       };
     }
 
+    function setAddMode(enabled) {
+      addMode = enabled;
+      addButton.classList.toggle('active', enabled);
+      addButton.textContent = enabled ? '✓ Waypoint ekleme açık' : '＋ Waypoint ekle';
+      modeHint.classList.toggle('visible', enabled);
+      document.body.classList.toggle('adding-waypoint', enabled);
+      statusText.textContent = enabled ? 'Haritada bir noktaya tıkla' : `${portName(activeRoute.origin)} → ${portName(activeRoute.destination)}`;
+    }
+
+    function renderPortLabels() {
+      portMarkers.forEach(marker => marker.remove());
+      portMarkers = [];
+      if (!activeRoute) return;
+      [activeRoute.origin, activeRoute.destination].forEach((key, index) => {
+        const coords = points[index === 0 ? 0 : points.length - 1];
+        const marker = L.circleMarker(coords, { radius:7, color:'#fff', weight:3, fillColor:index === 0 ? '#0f2742' : '#c96c4a', fillOpacity:1, interactive:false }).addTo(map);
+        marker.bindTooltip(portName(key), { permanent:true, direction:index === 0 ? 'right' : 'left', offset:index === 0 ? [10,0] : [-10,0], className:'port-label' }).openTooltip();
+        portMarkers.push(marker);
+      });
+    }
+
     function render() {
       markers.forEach(marker => marker.remove());
       markers = [];
-
       points.forEach((coords, index) => {
         const locked = index === 0 || index === points.length - 1;
         const marker = L.marker(coords, { icon:pointIcon(index, locked), draggable:!locked, zIndexOffset:700 }).addTo(map);
@@ -152,8 +179,8 @@
         }
         markers.push(marker);
       });
-
       polyline.setLatLngs(points);
+      renderPortLabels();
       updateInfo();
     }
 
@@ -161,7 +188,7 @@
       pointCount.textContent = points.length;
       distanceText.textContent = `${distanceKm(points).toFixed(1)} km`;
       jsonOutput.value = JSON.stringify(outputObject(), null, 2);
-      statusText.textContent = `${activeRoute.origin} → ${activeRoute.destination}`;
+      if (!addMode) statusText.textContent = `${portName(activeRoute.origin)} → ${portName(activeRoute.destination)}`;
     }
 
     function loadRoute(routeId) {
@@ -169,8 +196,9 @@
       activeRoute = routes.find(route => route.id === routeId) || routes[0];
       points = activeRoute.waypoints.map(point => [...point]);
       history = [];
+      setAddMode(false);
       render();
-      map.fitBounds(L.latLngBounds(points), { padding:[90,90] });
+      map.fitBounds(L.latLngBounds(points), { paddingTopLeft:[80,110], paddingBottomRight:[430,120] });
     }
 
     function nearestSegmentIndex(latlng) {
@@ -183,8 +211,8 @@
         const abx = b.x - a.x, aby = b.y - a.y;
         const apx = clickPoint.x - a.x, apy = clickPoint.y - a.y;
         const denom = abx * abx + aby * aby || 1;
-        const t = Math.max(0, Math.min(1, (apx * abx + apy * aby) / denom));
-        const x = a.x + abx * t, y = a.y + aby * t;
+        const ratio = Math.max(0, Math.min(1, (apx * abx + apy * aby) / denom));
+        const x = a.x + abx * ratio, y = a.y + aby * ratio;
         const distance = Math.hypot(clickPoint.x - x, clickPoint.y - y);
         if (distance < bestDistance) { bestDistance = distance; bestIndex = i + 1; }
       }
@@ -192,11 +220,11 @@
     }
 
     map.on('click', event => {
-      if (!activeRoute) return;
+      if (!activeRoute || !addMode) return;
       snapshot();
-      const insertAt = nearestSegmentIndex(event.latlng);
-      points.splice(insertAt, 0, [event.latlng.lat, event.latlng.lng]);
+      points.splice(nearestSegmentIndex(event.latlng), 0, [event.latlng.lat, event.latlng.lng]);
       render();
+      toast('Waypoint eklendi.');
     });
 
     function cancelTest() {
@@ -216,10 +244,7 @@
       for (let i = 0; i < lengths.length; i++) {
         if (target <= lengths[i]) {
           const ratio = target / lengths[i];
-          return [
-            points[i][0] + (points[i + 1][0] - points[i][0]) * ratio,
-            points[i][1] + (points[i + 1][1] - points[i][1]) * ratio
-          ];
+          return [points[i][0] + (points[i + 1][0] - points[i][0]) * ratio, points[i][1] + (points[i + 1][1] - points[i][1]) * ratio];
         }
         target -= lengths[i];
       }
@@ -228,6 +253,7 @@
 
     function testRoute() {
       cancelTest();
+      setAddMode(false);
       shipMarker = L.marker(points[0], { icon:shipIcon(), zIndexOffset:1000 }).addTo(map);
       const start = performance.now();
       const duration = 6500;
@@ -240,6 +266,7 @@
       testFrame = requestAnimationFrame(animate);
     }
 
+    addButton.addEventListener('click', () => setAddMode(!addMode));
     document.getElementById('undoButton').addEventListener('click', () => {
       cancelTest();
       const previous = history.pop();
@@ -247,36 +274,23 @@
       points = previous;
       render();
     });
-
     document.getElementById('clearButton').addEventListener('click', () => {
-      cancelTest();
-      snapshot();
-      points = [points[0], points[points.length - 1]];
-      render();
+      cancelTest(); snapshot(); points = [points[0], points[points.length - 1]]; render();
     });
-
     document.getElementById('testButton').addEventListener('click', testRoute);
     routeSelect.addEventListener('change', event => loadRoute(event.target.value));
 
     document.getElementById('copyButton').addEventListener('click', async () => {
-      try {
-        await navigator.clipboard.writeText(jsonOutput.value);
-        toast('JSON panoya kopyalandı.');
-      } catch {
-        jsonOutput.select();
-        document.execCommand('copy');
-        toast('JSON panoya kopyalandı.');
-      }
+      try { await navigator.clipboard.writeText(jsonOutput.value); }
+      catch { jsonOutput.select(); document.execCommand('copy'); }
+      toast('JSON panoya kopyalandı.');
     });
 
     document.getElementById('downloadButton').addEventListener('click', () => {
       const blob = new Blob([jsonOutput.value], { type:'application/json' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
-      link.href = url;
-      link.download = `${activeRoute.id}.json`;
-      link.click();
-      URL.revokeObjectURL(url);
+      link.href = url; link.download = `${activeRoute.id}.json`; link.click(); URL.revokeObjectURL(url);
     });
 
     Promise.all([
@@ -286,9 +300,8 @@
       ports = portsData.ports || portsData;
       routes = (routesData.routes || routesData).filter(route => route.mode === 'sea');
       if (!routes.length) throw new Error('Düzenlenebilir deniz rotası bulunamadı.');
-      routeSelect.innerHTML = routes.map(route => `<option value="${route.id}">${route.origin} → ${route.destination}</option>`).join('');
+      routeSelect.innerHTML = routes.map(route => `<option value="${route.id}">${portName(route.origin)} → ${portName(route.destination)}</option>`).join('');
       loadRoute(routes[0].id);
-      statusText.textContent = 'Hazır';
     }).catch(error => {
       console.error(error);
       statusText.textContent = 'Veri yüklenemedi';
