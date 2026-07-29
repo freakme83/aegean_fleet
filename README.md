@@ -8,7 +8,7 @@ Harita tabanlı, mevsimsel talep ve filo ekonomisi prototipi.
 - Ayvalık ↔ Çeşme
 - Çeşme ↔ Sakız
 
-Çeşme–Midilli doğrudan hattı tanımlı değildir. Sakız’dan Midilli’ye gitmek isteyen yolcular şu zorunlu aktarmayı kullanır:
+Çeşme–Midilli ve Sakız–Midilli doğrudan hatları tanımlı değildir. Sakız’dan Midilli’ye gitmek isteyen yolcular şu zorunlu aktarmayı kullanır:
 
 `Sakız → Çeşme → Ayvalık → Midilli`
 
