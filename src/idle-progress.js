@@ -134,6 +134,7 @@ function applyOfflineProgress() {
   const summary = { elapsedRealSeconds, gameMinutes, trips: 0, passengers: 0, revenue: 0, costs: 0, maintenance: 0 };
   for (let minute = 0; minute < gameMinutes; minute++) simulateMinute(state, summary);
   localStorage.setItem(SAVE_KEY, JSON.stringify(state));
+  localStorage.setItem(HIDDEN_AT_KEY, String(Date.now()));
   sessionStorage.setItem(SUMMARY_KEY, JSON.stringify(summary));
   return true;
 }
