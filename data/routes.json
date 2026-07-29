@@ -1,7 +1,17 @@
 {
-  "version": 5,
+  "version": 6,
   "generatedAt": "2026-07-29T00:00:00.000Z",
   "routes": {
+    "ayvalik-kucukkuyu": {
+      "id": "ayvalik-kucukkuyu",
+      "mode": "sea",
+      "origin": "ayvalik",
+      "destination": "kucukkuyu",
+      "distanceKm": 27.6,
+      "durationMinutes": 50,
+      "source": "manual-sea-corridor-pending-editor-review",
+      "waypoints": [[39.3192,26.6961],[39.32394,26.670685],[39.36,26.66],[39.42,26.64],[39.48,26.62],[39.5385,26.6],[39.5443,26.605]]
+    },
     "ayvalik-mytilene": {
       "id": "ayvalik-mytilene",
       "mode": "sea",
@@ -40,8 +50,6 @@
       "distanceKm": 89.6,
       "durationMinutes": 135,
       "source": "provisional-direct-sea-corridor",
-      "lockedByDefault": true,
-      "unlockCost": 30000,
       "waypoints": [[38.36972,26.13785],[38.43,26.195],[38.55,26.245],[38.68,26.285],[38.81,26.34],[38.94,26.45],[39.04,26.525],[39.1044,26.5621]]
     }
   }
