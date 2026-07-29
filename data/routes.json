@@ -29,7 +29,7 @@
       "destination": "chios",
       "distanceKm": 14.7,
       "durationMinutes": 28,
-      "source": "manual-sea-corridor",
+      "source": "manual-sea-corridor-pending-editor-review",
       "waypoints": [[38.325,26.295556],[38.3268,26.271],[38.34,26.24],[38.36,26.19],[38.3685,26.153],[38.36972,26.13785]]
     }
   }
