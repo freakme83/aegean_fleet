@@ -1,5 +1,5 @@
 (() => {
-  const SAVE_KEYS = ['aegean-fleet-fleet-v6', 'aegean-fleet-fleet-v5'];
+  const SAVE_KEYS = ['aegean-fleet-fleet-v7', 'aegean-fleet-fleet-v6'];
   const LINE_ID = 'chios-mytilene';
   const originalFetch = window.fetch.bind(window);
   function readState() {
