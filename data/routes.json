@@ -7,10 +7,10 @@
       "mode": "sea",
       "origin": "ayvalik",
       "destination": "kucukkuyu",
-      "distanceKm": 27.6,
+      "distanceKm": 27.8,
       "durationMinutes": 50,
-      "source": "manual-sea-corridor-pending-editor-review",
-      "waypoints": [[39.3192,26.6961],[39.32394,26.670685],[39.36,26.66],[39.42,26.64],[39.48,26.62],[39.5385,26.6],[39.5443,26.605]]
+      "source": "manual-route-editor",
+      "waypoints": [[39.3192,26.6961],[39.326463,26.689739],[39.33682,26.696949],[39.347574,26.705532],[39.375445,26.689224],[39.42,26.64],[39.48,26.62],[39.540058,26.604939],[39.5443,26.605]]
     },
     "ayvalik-mytilene": {
       "id": "ayvalik-mytilene",
