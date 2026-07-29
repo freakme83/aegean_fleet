@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Aegean Fleet Route Debug</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>
+    html,body,#map{height:100%;margin:0}body{font-family:system-ui,sans-serif}.legend{position:fixed;z-index:1000;top:16px;right:16px;background:#fff;padding:12px 14px;border-radius:12px;box-shadow:0 8px 24px #0002;font-size:13px}.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}.edge{display:inline-block;width:20px;border-top:3px solid;margin-right:6px;vertical-align:middle}
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <div class="legend">
+    <div><span class="dot" style="background:#c96c4a"></span>Deniz ağı düğümü</div>
+    <div><span class="edge" style="border-color:#97a6b0"></span>Onaylı deniz koridoru</div>
+    <div><span class="edge" style="border-color:#0f5f91"></span>Üretilen rota</div>
+  </div>
+  <script type="module">
+    const [graph, routeData] = await Promise.all([
+      fetch('./navigation-graph.json').then((response) => response.json()),
+      fetch('../data/routes.json').then((response) => response.json())
+    ]);
+
+    const map = L.map('map').setView([39.22, 26.62], 10);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png', { maxZoom: 14 }).addTo(map);
+
+    for (const [a, b] of graph.edges) {
+      L.polyline([graph.nodes[a], graph.nodes[b]], {
+        color: '#97a6b0', weight: 2, opacity: 0.75
+      }).addTo(map);
+    }
+
+    for (const [id, coordinates] of Object.entries(graph.nodes)) {
+      L.circleMarker(coordinates, {
+        radius: 5, color: '#fff', weight: 2, fillColor: '#c96c4a', fillOpacity: 1
+      }).addTo(map).bindTooltip(id);
+    }
+
+    const route = routeData.routes['ayvalik-mytilene'];
+    L.polyline(route.waypoints, {
+      color: '#0f5f91', weight: 5, opacity: 0.9
+    }).addTo(map).bindTooltip(`${route.origin} → ${route.destination}: ${route.distanceKm} km`);
+
+    map.fitBounds(L.latLngBounds(route.waypoints), { padding: [40, 40] });
+  </script>
+</body>
+</html>
