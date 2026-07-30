@@ -32,6 +32,7 @@ Rotaları düzenlemek için `/tools/route-editor.html` kullanılabilir.
 - Balıkesir ↔ Ayvalık karayolu bağlantısı
 - Minibüs: 20 yolcu
 - Otobüs: 50 yolcu
+- Kara taşıtlarında menzil sınırı yoktur.
 - Karayolu waypointleri `/tools/route-editor.html` üzerinden sarı yollar izlenerek düzenlenebilir.
 - İki terminal de açıldığında tanımlı bağlantı ücretsiz ve otomatik etkinleşir.
 
