@@ -227,21 +227,21 @@
       "mode": "sea",
       "origin": "chios",
       "destination": "mytilene",
-      "distanceKm": 89.6,
+      "distanceKm": 101.4,
       "durationMinutes": 135,
-      "source": "provisional-direct-sea-corridor",
+      "source": "manual-route-editor",
       "waypoints": [
         [
           38.36972,
           26.13785
         ],
         [
-          38.43,
-          26.195
+          38.449287,
+          26.18042
         ],
         [
-          38.55,
-          26.245
+          38.565348,
+          26.174927
         ],
         [
           38.68,
@@ -256,8 +256,16 @@
           26.45
         ],
         [
-          39.04,
-          26.525
+          38.970087,
+          26.558075
+        ],
+        [
+          38.999976,
+          26.62262
+        ],
+        [
+          39.057584,
+          26.62674
         ],
         [
           39.1044,

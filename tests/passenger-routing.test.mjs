@@ -13,6 +13,15 @@ const routeData = JSON.parse(await readFile(new URL('../data/routes.json', impor
 const fares = { 'cesme-chios': 22, 'ayvalik-cesme': 32, 'chios-mytilene': 34, 'ayvalik-mytilene': 25, 'ayvalik-balikesir': 9 };
 const key = (a, b) => [a, b].sort().join('-');
 const route = (a, b) => routeData.routes[`${a}-${b}`] || routeData.routes[`${b}-${a}`];
+const chiosMytilene = route('chios', 'mytilene');
+
+assert.equal(chiosMytilene.distanceKm, 101.4);
+assert.equal(chiosMytilene.durationMinutes, 135);
+assert.equal(chiosMytilene.source, 'manual-route-editor');
+assert.equal(chiosMytilene.waypoints.length, 10);
+assert.deepEqual(chiosMytilene.waypoints[1], [38.449287, 26.18042]);
+assert.deepEqual(chiosMytilene.waypoints.at(-2), [39.057584, 26.62674]);
+
 const paths = enumerateSimplePaths('chios', 'balikesir', nodes, (a, b) => Boolean(route(a, b)));
 
 assert.deepEqual(paths, [
