@@ -52,6 +52,15 @@ Balıkesir yolcuları Ayvalık üzerinden deniz hatlarına, deniz hatlarından g
 
 İzmir Adnan Menderes Havalimanı, Çeşme’ye 93,7 km’lik ve 31 waypointli elle düzenlenmiş karayolu rotasıyla bağlanır. Minibüs ve otobüs için yaz tarifesi €8’dir. İzmir–Ayvalık bağlantısı sonraki genişleme için ayrılmıştır.
 
+## Büyük feribot
+
+- Aegean Grand 120: 120 yolcu, 77 km/sa, 520 km menzil
+- Satın alma: €220.000
+- Boş operasyon: €16/km; terminal vergisi: €0,12/dk
+- Bakım: 700 km’de bir €650
+- Standart deniz tarifesinin `%20` üzerinde premium bilet uygular.
+- Örnek yaz tarifeleri: Ayvalık–Küçükkuyu €19, Ayvalık–Midilli €30, Ayvalık–Çeşme €38, Çeşme–Sakız €26, Sakız–Midilli €41
+
 ## Talep ve hizmet güveni
 
 - Doğrudan hatlarda sakin dönemlerde de asgari yolcu akışı korunur.
