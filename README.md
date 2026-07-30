@@ -2,7 +2,7 @@
 
 Harita tabanlı, mevsimsel talep ve filo ekonomisi prototipi.
 
-## Mevcut liman ağı
+## Mevcut ulaşım ağı
 
 - Ayvalık ↔ Midilli
 - Ayvalık ↔ Çeşme
@@ -17,7 +17,11 @@ Harita tabanlı, mevsimsel talep ve filo ekonomisi prototipi.
 ## Açılış gereksinimleri
 
 - Çeşme Limanı: €20.000
-- Sakız hattı: Çeşme açık olmalı + €25.000
+- Sakız Limanı: €25.000
+- Midilli Limanı: €30.000
+- Balıkesir Otogarı: €10.000
+
+Hat lisans bedeli yoktur. İki terminal satın alındığında aralarında tanımlı bağlantı varsa otomatik ve ücretsiz etkinleşir.
 
 ## Geliştirme araçları
 
@@ -25,7 +29,6 @@ Rotaları düzenlemek için `/tools/route-editor.html` kullanılabilir.
 
 ## Karayolu genişlemesi
 
-- Balıkesir Otogarı: €10.000
 - Balıkesir ↔ Ayvalık karayolu bağlantısı
 - Minibüs: 20 yolcu
 - Otobüs: 50 yolcu
