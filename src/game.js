@@ -73,6 +73,13 @@ function vehicleHeading(v) {
 function shipIcon(v) { const type = spec(v), color = COLORS[v.colorIndex % COLORS.length], visual = v.type === 'coastal60' ? '<span class="vehicle-symbol ferry-sprite"></span>' : `<span class="vehicle-symbol">${type.symbol}</span>`; return L.divIcon({ className: '', html: `<div class="sc ship-${v.type}" style="--ship-color:${color}">${visual}<span class="vehicle-count"></span></div>`, iconSize: [32, 32], iconAnchor: [16, 16] }); }
 function addVehicleMarker(v) { const marker = L.marker(ports[v.loc].terminal, { icon: shipIcon(v), zIndexOffset: 1000 }).addTo(map).bindTooltip(v.name, { permanent: false, direction: 'top', offset: [0, -16], className: 'sl' }); marker._labelPinned = false; marker.on('click', () => { S.selected = v.id; showView('fleet'); render(); }); shipMarkers[v.id] = marker; }
 function rebuildShips() { Object.values(shipMarkers).forEach(marker => marker.remove()); shipMarkers = {}; S.vehicles.forEach(addVehicleMarker); }
+const VEHICLE_ZOOM_SCALES = { 8: 0.46, 9: 0.55, 10: 0.65, 11: 0.76, 12: 0.89, 13: 1.05 };
+function vehicleScaleForZoom(zoom) {
+  const clamped = Math.max(8, Math.min(13, zoom)), lower = Math.floor(clamped), upper = Math.ceil(clamped);
+  if (lower === upper) return VEHICLE_ZOOM_SCALES[lower];
+  const progress = clamped - lower;
+  return VEHICLE_ZOOM_SCALES[lower] + (VEHICLE_ZOOM_SCALES[upper] - VEHICLE_ZOOM_SCALES[lower]) * progress;
+}
 function updateVehicleMarkers() {
   const zoom = map.getZoom(), clusterTerminals = zoom <= 8, compact = zoom <= 9, docked = new Map();
   for (const item of S.vehicles) if (item.st !== 'sailing') { const group = docked.get(item.loc) || []; group.push(item); docked.set(item.loc, group); }
@@ -89,6 +96,7 @@ function updateVehicleMarkers() {
     const element = marker.getElement(), icon = element?.querySelector('.sc'), badge = element?.querySelector('.vehicle-count'), ferrySprite = element?.querySelector('.ferry-sprite');
     if (ferrySprite) ferrySprite.style.transform = `rotate(${vehicleHeading(item) - 90}deg)`;
     if (element) element.style.pointerEvents = hidden ? 'none' : '';
+    if (icon) icon.style.scale = vehicleScaleForZoom(zoom).toFixed(3);
     icon?.classList.toggle('vehicle-compact', compact); icon?.classList.toggle('vehicle-selected', item.id === S.selected); icon?.classList.toggle('vehicle-cluster', clusterTerminals && !hidden && group.length > 1);
     if (badge) { const count = clusterTerminals && !hidden && group.length > 1 ? group.length : 0; badge.textContent = count ? `×${count}` : ''; badge.classList.toggle('visible', Boolean(count)); }
     const shouldPin = !hidden && (item.id === S.selected || zoom >= 10);
