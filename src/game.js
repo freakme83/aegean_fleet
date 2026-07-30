@@ -56,7 +56,6 @@ function portLoadColor(id) { if (!unlocked(id)) return '#97a5ad'; const ratio = 
 function portIcon(id, index) { const locked = !unlocked(id), side = PORT_LABEL_SIDES[id] || (index % 2 ? 'l' : 'r'), label = `${ports[id].name}${locked ? ' 🔒' : ''}`; return L.divIcon({ className: '', html: `<div class="ps ${side} ${locked ? 'locked' : ''}" style="--port-load-color:${portLoadColor(id)}"><div class="pd"></div><div class="pc"><div class="pt">${label}</div><div class="pv" id="pv-${id}"></div></div></div>`, iconSize: [18, 18], iconAnchor: [9, 9] }); }
 function openPortPopup(id) { if (unlocked(id)) return; const item = PORT_MARKET[id]; if (!item) return; const canBuy = S.cash >= item.price, html = `<div class="port-buy-popup"><strong>${ports[id].name}</strong><div>${money(item.price)}</div><div style="margin-top:5px;font-size:11px">Liman açılınca mevcut bağlantıları otomatik kullanıma girer.</div><button id="buy-port-popup" ${canBuy ? '' : 'disabled'}>${canBuy ? 'Limanı satın al' : 'Yetersiz bakiye'}</button></div>`, popup = L.popup({ closeButton: true, offset: [0, -8] }).setLatLng(ports[id].terminal).setContent(html).openOn(map); setTimeout(() => { const button = document.getElementById('buy-port-popup'); if (button && !button.disabled) button.onclick = () => { buyPort(id); map.closePopup(popup); }; }, 0); }
 PORT_IDS.forEach((id, index) => { const marker = L.marker(ports[id].terminal, { icon: portIcon(id, index), zIndexOffset: 400 }).addTo(map); marker.on('click', () => openPortPopup(id)); markers[id] = marker; });
-const FERRY_SPRITE_POSITIONS = [[0, 0], [33.333, 0], [66.667, 0], [100, 0], [0, 100], [33.333, 100], [66.667, 100], [100, 100]];
 function vehicleHeading(v) {
   if (v.st !== 'sailing' || !v.dst) return v.heading || 0;
   const points = route(v.loc, v.dst).waypoints, lengths = []; let total = 0;
@@ -65,7 +64,7 @@ function vehicleHeading(v) {
   for (let i = 0; i < lengths.length; i++) {
     if (cursor <= lengths[i] || i === lengths.length - 1) {
       const a = points[i], b = points[i + 1], north = b[0] - a[0], east = (b[1] - a[1]) * Math.cos((a[0] + b[0]) * Math.PI / 360), degrees = (Math.atan2(east, north) * 180 / Math.PI + 360) % 360;
-      v.heading = Math.round(degrees / 45) % 8; return v.heading;
+      v.heading = degrees; return v.heading;
     }
     cursor -= lengths[i];
   }
@@ -88,7 +87,7 @@ function updateVehicleMarkers() {
     }
     marker.setLatLng(latLng); marker.setOpacity(hidden ? 0 : 1); marker.setZIndexOffset(item.id === S.selected ? 1400 : 1000);
     const element = marker.getElement(), icon = element?.querySelector('.sc'), badge = element?.querySelector('.vehicle-count'), ferrySprite = element?.querySelector('.ferry-sprite');
-    if (ferrySprite) { const [x, y] = FERRY_SPRITE_POSITIONS[vehicleHeading(item)]; ferrySprite.style.backgroundPosition = `${x}% ${y}%`; }
+    if (ferrySprite) ferrySprite.style.transform = `rotate(${vehicleHeading(item) - 90}deg)`;
     if (element) element.style.pointerEvents = hidden ? 'none' : '';
     icon?.classList.toggle('vehicle-compact', compact); icon?.classList.toggle('vehicle-selected', item.id === S.selected); icon?.classList.toggle('vehicle-cluster', clusterTerminals && !hidden && group.length > 1);
     if (badge) { const count = clusterTerminals && !hidden && group.length > 1 ? group.length : 0; badge.textContent = count ? `×${count}` : ''; badge.classList.toggle('visible', Boolean(count)); }
