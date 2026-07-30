@@ -40,7 +40,7 @@ const PORT_MARKET = {
   izmir: { price: 50000, country: 'TR' }
 };
 const C = { base: 0.72, key: 'aegean-fleet-fleet-v10', old: 'aegean-fleet-fleet-v9', start: new Date(2020, 4, 1, 8), dockTax: 0.08, startCash: 2000, loadCostMax: 0.18 };
-const SUMMER_FARES = { 'ayvalik-kucukkuyu': 16, 'ayvalik-mytilene': 25, 'ayvalik-cesme': 32, 'cesme-chios': 22, 'chios-mytilene': 34, 'ayvalik-balikesir': 9, 'balikesir-kucukkuyu': 9, 'istanbul-izmir': 60 };
+const SUMMER_FARES = { 'ayvalik-kucukkuyu': 16, 'ayvalik-mytilene': 25, 'ayvalik-cesme': 32, 'cesme-chios': 22, 'chios-mytilene': 34, 'ayvalik-balikesir': 9, 'balikesir-kucukkuyu': 9, 'istanbul-izmir': 60, 'cesme-izmir': 8 };
 const FARE_MULT = { summer: 1, shoulder: 0.92, low: 0.81, winter: 0.72 };
 const SPEED_UPGRADES = { 4: { cost: 30000 }, 8: { cost: 120000 } };
 const ports = Object.fromEntries(PORT_IDS.map(id => [id, engine.getNode(id)]));

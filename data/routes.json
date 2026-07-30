@@ -1,5 +1,5 @@
 {
-  "version": 8,
+  "version": 9,
   "generatedAt": "2026-07-30T00:00:00.000Z",
   "routes": {
     "ayvalik-kucukkuyu": {
@@ -706,6 +706,26 @@
         [38.478051, 27.119751],
         [38.325296, 27.146358],
         [38.289167, 27.155]
+      ]
+    },
+    "izmir-cesme": {
+      "id": "izmir-cesme",
+      "mode": "road",
+      "origin": "izmir",
+      "destination": "cesme",
+      "distanceKm": 80.6,
+      "durationMinutes": 115,
+      "source": "generated-road-route-pending-editor-review",
+      "waypoints": [
+        [38.289167, 27.155],
+        [38.315, 27.139],
+        [38.346, 27.108],
+        [38.379, 27.04],
+        [38.36, 26.93],
+        [38.33, 26.79],
+        [38.305, 26.63],
+        [38.302, 26.48],
+        [38.325, 26.295556]
       ]
     }
   }

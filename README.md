@@ -50,7 +50,7 @@ Balıkesir yolcuları Ayvalık üzerinden deniz hatlarına, deniz hatlarından g
 - Uçuş süresi seyir hızına ek olarak taksi, kalkış, tırmanış ve yaklaşma süresini içerir.
 - Otomatik rota `/tools/route-editor.html` içinden elle düzenlenip `manual-air-route-editor` kaynağıyla dışa aktarılabilir.
 
-İzmir’in Çeşme ve Ayvalık bağlantıları sonraki genişleme için terminal verisinde hazırdır; bu sürümde yalnızca İstanbul–İzmir hava hattı tanımlıdır.
+İzmir Adnan Menderes Havalimanı, Çeşme’ye 80,6 km’lik düzenlenebilir başlangıç karayolu rotasıyla bağlanır. Minibüs ve otobüs için yaz tarifesi €8’dir. Rota kesin waypointler girilene kadar `generated-road-route-pending-editor-review` olarak işaretlidir. İzmir–Ayvalık bağlantısı sonraki genişleme için ayrılmıştır.
 
 ## Talep ve hizmet güveni
 
