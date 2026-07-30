@@ -25,10 +25,13 @@ assert.deepEqual(chiosMytilene.waypoints[1], [38.449287, 26.18042]);
 assert.deepEqual(chiosMytilene.waypoints.at(-2), [39.057584, 26.62674]);
 
 assert.equal(balikesirKucukkuyu.mode, 'road');
-assert.equal(balikesirKucukkuyu.distanceKm, 125.7);
+assert.equal(balikesirKucukkuyu.distanceKm, 128.6);
 assert.equal(balikesirKucukkuyu.durationMinutes, 145);
-assert.equal(balikesirKucukkuyu.source, 'manual-road-route-editor-draft');
+assert.equal(balikesirKucukkuyu.source, 'manual-road-route-editor');
 assert.deepEqual(balikesirKucukkuyu.waypoints.slice(0, 52), balikesirAyvalik.waypoints.slice(0, 52));
+assert.equal(balikesirKucukkuyu.waypoints.length, 75);
+assert.deepEqual(balikesirKucukkuyu.waypoints[52], [39.580026, 27.035637]);
+assert.deepEqual(balikesirKucukkuyu.waypoints.at(-2), [39.548033, 26.605368]);
 assert.deepEqual(balikesirKucukkuyu.waypoints.at(-1), [39.5443, 26.605]);
 assert.equal(fares['balikesir-kucukkuyu'], 9);
 
