@@ -30,8 +30,10 @@ Rotaları düzenlemek için `/tools/route-editor.html` kullanılabilir.
 ## Karayolu genişlemesi
 
 - Balıkesir ↔ Ayvalık karayolu bağlantısı
+- Balıkesir ↔ Küçükkuyu karayolu bağlantısı (0–51 ortak waypoint, Küçükkuyu bölümü rota editöründe tamamlanacak)
 - Minibüs: 20 yolcu
 - Otobüs: 50 yolcu
+- Her iki kara taşıtı için Balıkesir–Küçükkuyu yaz tarifesi: €9
 - Kara taşıtlarında menzil sınırı yoktur.
 - Karayolu waypointleri `/tools/route-editor.html` üzerinden sarı yollar izlenerek düzenlenebilir.
 - İki terminal de açıldığında tanımlı bağlantı ücretsiz ve otomatik etkinleşir.
