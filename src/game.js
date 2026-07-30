@@ -32,7 +32,7 @@ function seasonBand(date) { const month = date.getMonth() + 1; if ([6, 7, 8].inc
 function timeBand(date) { const hour = date.getHours() + date.getMinutes() / 60; if (hour >= 7 && hour < 10) return ['Sabah yoğunluğu', 1.45]; if (hour >= 16 && hour < 20) return ['Akşam yoğunluğu', 1.65]; if (hour >= 23 || hour < 7) return ['Gece talebi', 0.18]; return ['Gündüz talebi', 1]; }
 function distanceDemandFactor(km) { if (km <= 20) return 1.1; if (km <= 50) return 1.04; if (km <= 100) return 0.98; return 0.92; }
 function fareFor(a, b, date = now()) { const base = SUMMER_FARES[routeKey(a, b)] ?? Math.round(18 + route(a, b).distanceKm * 0.13); return Math.round(base * FARE_MULT[seasonBand(date)[1]]); }
-function newVehicle(id, type = 'coastal60', name = 'MV Ege', loc = 'ayvalik', colorIndex = 0) { return { id, type, name, loc, colorIndex, dst: null, pair: null, st: 'idle', pas: 0, manifest: {}, p: 0, fullness: 80, autoTour: false, plannedDst: '', lastRevenue: 0, lastOp: 0, currentOp: 0, kmMaint: 0, totalKm: 0 }; }
+function newVehicle(id, type = 'coastal60', name = 'MV Ege', loc = 'ayvalik', colorIndex = 0) { return { id, type, name, loc, colorIndex, dst: null, pair: null, st: 'idle', pas: 0, manifest: {}, p: 0, fullness: 80, autoTour: false, plannedDst: '', lastRevenue: 0, lastOp: 0, currentOp: 0, kmMaint: 0, totalKm: 0, heading: 0 }; }
 function emptyQueues() { const queues = {}; for (const origin of PORT_IDS) { queues[origin] = {}; for (const destination of PORT_IDS) if (origin !== destination) queues[origin][destination] = 0; } queues.ayvalik.kucukkuyu = 4; queues.kucukkuyu.ayvalik = 3; return queues; }
 function fresh() { return { m: 0, s: 1, cash: C.startCash, unlocked: ['ayvalik', 'kucukkuyu'], openedLines: [], speedTiers: [1, 2], vehicles: [newVehicle('v1')], selected: 'v1', w: emptyQueues(), fr: {}, v: 10, marketTab: 'vehicles' }; }
 let S = fresh(), markers = {}, shipMarkers = {}, routeLine = L.polyline([], { color: '#315f78', weight: 3, opacity: 0.75, dashArray: '8 10' }), lastFrame = performance.now(), lastSaveMinute = -1, toastTimer;
@@ -56,7 +56,22 @@ function portLoadColor(id) { if (!unlocked(id)) return '#97a5ad'; const ratio = 
 function portIcon(id, index) { const locked = !unlocked(id), side = PORT_LABEL_SIDES[id] || (index % 2 ? 'l' : 'r'), label = `${ports[id].name}${locked ? ' 🔒' : ''}`; return L.divIcon({ className: '', html: `<div class="ps ${side} ${locked ? 'locked' : ''}" style="--port-load-color:${portLoadColor(id)}"><div class="pd"></div><div class="pc"><div class="pt">${label}</div><div class="pv" id="pv-${id}"></div></div></div>`, iconSize: [18, 18], iconAnchor: [9, 9] }); }
 function openPortPopup(id) { if (unlocked(id)) return; const item = PORT_MARKET[id]; if (!item) return; const canBuy = S.cash >= item.price, html = `<div class="port-buy-popup"><strong>${ports[id].name}</strong><div>${money(item.price)}</div><div style="margin-top:5px;font-size:11px">Liman açılınca mevcut bağlantıları otomatik kullanıma girer.</div><button id="buy-port-popup" ${canBuy ? '' : 'disabled'}>${canBuy ? 'Limanı satın al' : 'Yetersiz bakiye'}</button></div>`, popup = L.popup({ closeButton: true, offset: [0, -8] }).setLatLng(ports[id].terminal).setContent(html).openOn(map); setTimeout(() => { const button = document.getElementById('buy-port-popup'); if (button && !button.disabled) button.onclick = () => { buyPort(id); map.closePopup(popup); }; }, 0); }
 PORT_IDS.forEach((id, index) => { const marker = L.marker(ports[id].terminal, { icon: portIcon(id, index), zIndexOffset: 400 }).addTo(map); marker.on('click', () => openPortPopup(id)); markers[id] = marker; });
-function shipIcon(v) { const type = spec(v), color = COLORS[v.colorIndex % COLORS.length]; return L.divIcon({ className: '', html: `<div class="sc ship-${v.type}" style="--ship-color:${color}"><span class="vehicle-symbol">${type.symbol}</span><span class="vehicle-count"></span></div>`, iconSize: [32, 32], iconAnchor: [16, 16] }); }
+const FERRY_SPRITE_POSITIONS = [[0, 0], [33.333, 0], [66.667, 0], [100, 0], [0, 100], [33.333, 100], [66.667, 100], [100, 100]];
+function vehicleHeading(v) {
+  if (v.st !== 'sailing' || !v.dst) return v.heading || 0;
+  const points = route(v.loc, v.dst).waypoints, lengths = []; let total = 0;
+  for (let i = 0; i < points.length - 1; i++) { const length = L.latLng(points[i]).distanceTo(points[i + 1]); lengths.push(length); total += length; }
+  let cursor = Math.min(Math.max(0, total * v.p), Math.max(0, total - 0.001));
+  for (let i = 0; i < lengths.length; i++) {
+    if (cursor <= lengths[i] || i === lengths.length - 1) {
+      const a = points[i], b = points[i + 1], north = b[0] - a[0], east = (b[1] - a[1]) * Math.cos((a[0] + b[0]) * Math.PI / 360), degrees = (Math.atan2(east, north) * 180 / Math.PI + 360) % 360;
+      v.heading = Math.round(degrees / 45) % 8; return v.heading;
+    }
+    cursor -= lengths[i];
+  }
+  return v.heading || 0;
+}
+function shipIcon(v) { const type = spec(v), color = COLORS[v.colorIndex % COLORS.length], visual = v.type === 'coastal60' ? '<span class="vehicle-symbol ferry-sprite"></span>' : `<span class="vehicle-symbol">${type.symbol}</span>`; return L.divIcon({ className: '', html: `<div class="sc ship-${v.type}" style="--ship-color:${color}">${visual}<span class="vehicle-count"></span></div>`, iconSize: [32, 32], iconAnchor: [16, 16] }); }
 function addVehicleMarker(v) { const marker = L.marker(ports[v.loc].terminal, { icon: shipIcon(v), zIndexOffset: 1000 }).addTo(map).bindTooltip(v.name, { permanent: false, direction: 'top', offset: [0, -16], className: 'sl' }); marker._labelPinned = false; marker.on('click', () => { S.selected = v.id; showView('fleet'); render(); }); shipMarkers[v.id] = marker; }
 function rebuildShips() { Object.values(shipMarkers).forEach(marker => marker.remove()); shipMarkers = {}; S.vehicles.forEach(addVehicleMarker); }
 function updateVehicleMarkers() {
@@ -72,7 +87,8 @@ function updateVehicleMarkers() {
       latLng = map.layerPointToLatLng(point);
     }
     marker.setLatLng(latLng); marker.setOpacity(hidden ? 0 : 1); marker.setZIndexOffset(item.id === S.selected ? 1400 : 1000);
-    const element = marker.getElement(), icon = element?.querySelector('.sc'), badge = element?.querySelector('.vehicle-count');
+    const element = marker.getElement(), icon = element?.querySelector('.sc'), badge = element?.querySelector('.vehicle-count'), ferrySprite = element?.querySelector('.ferry-sprite');
+    if (ferrySprite) { const [x, y] = FERRY_SPRITE_POSITIONS[vehicleHeading(item)]; ferrySprite.style.backgroundPosition = `${x}% ${y}%`; }
     if (element) element.style.pointerEvents = hidden ? 'none' : '';
     icon?.classList.toggle('vehicle-compact', compact); icon?.classList.toggle('vehicle-selected', item.id === S.selected); icon?.classList.toggle('vehicle-cluster', clusterTerminals && !hidden && group.length > 1);
     if (badge) { const count = clusterTerminals && !hidden && group.length > 1 ? group.length : 0; badge.textContent = count ? `×${count}` : ''; badge.classList.toggle('visible', Boolean(count)); }
