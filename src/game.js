@@ -88,7 +88,7 @@ function vehicleHeading(v) {
   }
   return v.heading || 0;
 }
-function shipIcon(v) { const type = spec(v), color = COLORS[v.colorIndex % COLORS.length], visual = v.type === 'coastal60' ? '<span class="vehicle-symbol ferry-sprite"></span>' : `<span class="vehicle-symbol">${type.symbol}</span>`; return L.divIcon({ className: '', html: `<div class="sc ship-${v.type}" style="--ship-color:${color}">${visual}<span class="vehicle-count"></span></div>`, iconSize: [32, 32], iconAnchor: [16, 16] }); }
+function shipIcon(v) { const type = spec(v), color = COLORS[v.colorIndex % COLORS.length], usesFerrySprite = ['coastal60', 'swift80'].includes(v.type), visual = usesFerrySprite ? '<span class="vehicle-symbol ferry-sprite"></span>' : `<span class="vehicle-symbol">${type.symbol}</span>`; return L.divIcon({ className: '', html: `<div class="sc ship-${v.type}" style="--ship-color:${color}">${visual}<span class="vehicle-count"></span></div>`, iconSize: [32, 32], iconAnchor: [16, 16] }); }
 function addVehicleMarker(v) { const marker = L.marker(ports[v.loc].terminal, { icon: shipIcon(v), zIndexOffset: 1000 }).addTo(map).bindTooltip(v.name, { permanent: false, direction: 'top', offset: [0, -16], className: 'sl' }); marker._labelPinned = false; marker.on('click', () => { S.selected = v.id; showView('fleet'); render(); }); shipMarkers[v.id] = marker; }
 function rebuildShips() { Object.values(shipMarkers).forEach(marker => marker.remove()); shipMarkers = {}; S.vehicles.forEach(addVehicleMarker); }
 const VEHICLE_ZOOM_SCALES = { 8: 0.46, 9: 0.55, 10: 0.65, 11: 0.76, 12: 0.89, 13: 1.05 };

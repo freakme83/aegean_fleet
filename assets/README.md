@@ -22,3 +22,10 @@ ship: {
 ```
 
 Keep the subject centered with transparent padding. The simulation position and route logic are separate from the visual asset, so sprites can be swapped without changing gameplay code.
+
+Current top-down ferry sprites:
+
+- `coastal-ferry-60-topdown.png` — 60-seat ferry, red, bow points right.
+- `aegean-swift-80-topdown.png` — 80-seat fast ferry, yellow, bow points right.
+
+Both use a centered 256×256 transparent canvas. The renderer rotates the right-facing source image continuously from the route bearing.
