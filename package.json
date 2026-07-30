@@ -6,6 +6,6 @@
   "scripts": {
     "serve": "python3 -m http.server 8080",
     "generate:routes": "node tools/generate-sea-routes.mjs",
-    "test": "node tests/demand-balance.test.mjs && node tests/vehicle-rules.test.mjs && node tests/vehicle-sprites.test.mjs && node tests/passenger-routing.test.mjs"
+    "test": "node tests/demand-balance.test.mjs && node tests/vehicle-rules.test.mjs && node tests/vehicle-sprites.test.mjs && node tests/passenger-routing.test.mjs && node tests/air-transport.test.mjs && node tests/izmir-cesme-road.test.mjs && node tests/grand-ferry.test.mjs"
   }
 }

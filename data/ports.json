@@ -81,12 +81,27 @@
   },
   "istanbul": {
     "id": "istanbul",
-    "name": "İstanbul",
+    "name": "İstanbul Havalimanı",
     "type": "airport",
     "terminal": [
-      41.2753,
-      28.7519
-    ]
+      41.275278,
+      28.751944
+    ],
+    "intensity": 0.85,
+    "unlockCost": 80000,
+    "country": "TR"
+  },
+  "izmir": {
+    "id": "izmir",
+    "name": "İzmir Adnan Menderes Havalimanı",
+    "type": "airport",
+    "terminal": [
+      38.289167,
+      27.155
+    ],
+    "intensity": 0.72,
+    "unlockCost": 50000,
+    "country": "TR"
   },
   "athens": {
     "id": "athens",

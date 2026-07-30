@@ -40,6 +40,27 @@ Rotaları düzenlemek için `/tools/route-editor.html` kullanılabilir.
 
 Balıkesir yolcuları Ayvalık üzerinden deniz hatlarına, deniz hatlarından gelen yolcular da Ayvalık üzerinden Balıkesir'e aktarma yapabilir.
 
+## Hava yolu genişlemesi
+
+- İstanbul Havalimanı: €80.000
+- İzmir Adnan Menderes Havalimanı: €50.000
+- İstanbul ↔ İzmir elle düzenlenmiş hava rotası: 363,8 km
+- Anadolu Bölgesel 40: 40 yolcu, 430 km/sa, €120.000, yaz bileti €60, yaklaşık 81 dakika
+- Ege Jet 100: 100 yolcu, 780 km/sa, €280.000, yaz bileti €75, yaklaşık 63 dakika
+- Uçuş süresi seyir hızına ek olarak taksi, kalkış, tırmanış ve yaklaşma süresini içerir.
+- Otomatik rota `/tools/route-editor.html` içinden elle düzenlenip `manual-air-route-editor` kaynağıyla dışa aktarılabilir.
+
+İzmir Adnan Menderes Havalimanı, Çeşme’ye 93,7 km’lik ve 31 waypointli elle düzenlenmiş karayolu rotasıyla bağlanır. Minibüs ve otobüs için yaz tarifesi €8’dir. İzmir–Ayvalık bağlantısı sonraki genişleme için ayrılmıştır.
+
+## Büyük feribot
+
+- Aegean Grand 120: 120 yolcu, 77 km/sa, 520 km menzil
+- Satın alma: €220.000
+- Boş operasyon: €16/km; terminal vergisi: €0,12/dk
+- Bakım: 700 km’de bir €650
+- Standart deniz tarifesinin `%20` üzerinde premium bilet uygular.
+- Örnek yaz tarifeleri: Ayvalık–Küçükkuyu €19, Ayvalık–Midilli €30, Ayvalık–Çeşme €38, Çeşme–Sakız €26, Sakız–Midilli €41
+
 ## Talep ve hizmet güveni
 
 - Doğrudan hatlarda sakin dönemlerde de asgari yolcu akışı korunur.
