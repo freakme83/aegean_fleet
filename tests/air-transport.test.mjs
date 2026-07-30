@@ -14,16 +14,19 @@ assert.equal(ports.istanbul.unlockCost, 80000);
 assert.equal(ports.izmir.unlockCost, 50000);
 
 assert.equal(route.mode, 'air');
-assert.equal(route.distanceKm, 359);
+assert.equal(route.distanceKm, 363.8);
 assert.equal(route.durationMinutes, 70);
-assert.equal(route.source, 'generated-air-route-pending-editor-review');
-assert.equal(route.waypoints.length, 13);
+assert.equal(route.source, 'manual-air-route-editor');
+assert.equal(route.waypoints.length, 15);
 assert.deepEqual(route.waypoints[0], ports.istanbul.terminal);
+assert.deepEqual(route.waypoints[1], [41.237415, 28.753452]);
+assert.deepEqual(route.waypoints.at(-3), [38.478051, 27.119751]);
+assert.deepEqual(route.waypoints.at(-2), [38.325296, 27.146358]);
 assert.deepEqual(route.waypoints.at(-1), ports.izmir.terminal);
 
 const engine = new RouteEngine({ nodes: ports, routeData });
 const reverse = engine.getRoute({ mode: 'air', origin: 'izmir', destination: 'istanbul' });
-assert.equal(reverse.distanceKm, 359);
+assert.equal(reverse.distanceKm, 363.8);
 assert.deepEqual(reverse.waypoints[0], ports.izmir.terminal);
 assert.deepEqual(reverse.waypoints.at(-1), ports.istanbul.terminal);
 

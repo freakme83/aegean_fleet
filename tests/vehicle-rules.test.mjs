@@ -12,10 +12,10 @@ assert.equal(vehicleWithinRange(ferry, 180.1), false);
 assert.equal(vehicleRangeLabel(minibus), 'Menzil sınırı yok');
 assert.equal(vehicleRangeLabel(ferry), 'Menzil 180 km');
 
-const flight = { distanceKm: 359, durationMinutes: 70 };
+const flight = { distanceKm: 363.8, durationMinutes: 70 };
 const regional = { mode: 'air', speed: 430, airOverheadMinutes: 30 };
 const jet = { mode: 'air', speed: 780, airOverheadMinutes: 35 };
-assert.equal(Math.round(vehicleTripMinutes(regional, flight)), 80);
+assert.equal(Math.round(vehicleTripMinutes(regional, flight)), 81);
 assert.equal(Math.round(vehicleTripMinutes(jet, flight)), 63);
 assert.ok(vehicleTripMinutes(jet, flight) < vehicleTripMinutes(regional, flight));
 

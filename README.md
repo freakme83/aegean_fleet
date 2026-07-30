@@ -44,8 +44,8 @@ Balıkesir yolcuları Ayvalık üzerinden deniz hatlarına, deniz hatlarından g
 
 - İstanbul Havalimanı: €80.000
 - İzmir Adnan Menderes Havalimanı: €50.000
-- İstanbul ↔ İzmir otomatik başlangıç rotası: 359 km
-- Anadolu Bölgesel 40: 40 yolcu, 430 km/sa, €120.000, yaz bileti €60, yaklaşık 80 dakika
+- İstanbul ↔ İzmir elle düzenlenmiş hava rotası: 363,8 km
+- Anadolu Bölgesel 40: 40 yolcu, 430 km/sa, €120.000, yaz bileti €60, yaklaşık 81 dakika
 - Ege Jet 100: 100 yolcu, 780 km/sa, €280.000, yaz bileti €75, yaklaşık 63 dakika
 - Uçuş süresi seyir hızına ek olarak taksi, kalkış, tırmanış ve yaklaşma süresini içerir.
 - Otomatik rota `/tools/route-editor.html` içinden elle düzenlenip `manual-air-route-editor` kaynağıyla dışa aktarılabilir.
