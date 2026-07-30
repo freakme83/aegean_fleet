@@ -1,9 +1,112 @@
 {
-  "ayvalik": {"id":"ayvalik","name":"Ayvalık","type":"port","terminal":[39.3192,26.6961],"seaGate":[39.32394,26.670685],"intensity":0.55,"unlockCost":0,"country":"TR"},
-  "kucukkuyu": {"id":"kucukkuyu","name":"Küçükkuyu","type":"port","terminal":[39.5443,26.605],"seaGate":[39.5385,26.6],"intensity":0.50,"unlockCost":0,"country":"TR"},
-  "mytilene": {"id":"mytilene","name":"Midilli","type":"port","terminal":[39.1044,26.5621],"seaGate":[39.101725,26.563869],"intensity":0.70,"unlockCost":30000,"country":"GR"},
-  "cesme": {"id":"cesme","name":"Çeşme","type":"port","terminal":[38.325,26.295556],"seaGate":[38.323,26.27],"intensity":0.62,"unlockCost":20000,"country":"TR"},
-  "chios": {"id":"chios","name":"Sakız","type":"port","terminal":[38.36972,26.13785],"seaGate":[38.3685,26.153],"intensity":0.66,"unlockCost":25000,"country":"GR"},
-  "istanbul": {"id":"istanbul","name":"İstanbul","type":"airport","terminal":[41.2753,28.7519]},
-  "athens": {"id":"athens","name":"Atina","type":"airport","terminal":[37.9364,23.9475]}
+  "ayvalik": {
+    "id": "ayvalik",
+    "name": "Ayvalık",
+    "type": "port",
+    "terminal": [
+      39.3192,
+      26.6961
+    ],
+    "seaGate": [
+      39.32394,
+      26.670685
+    ],
+    "intensity": 0.55,
+    "unlockCost": 0,
+    "country": "TR"
+  },
+  "kucukkuyu": {
+    "id": "kucukkuyu",
+    "name": "Küçükkuyu",
+    "type": "port",
+    "terminal": [
+      39.5443,
+      26.605
+    ],
+    "seaGate": [
+      39.5385,
+      26.6
+    ],
+    "intensity": 0.5,
+    "unlockCost": 0,
+    "country": "TR"
+  },
+  "mytilene": {
+    "id": "mytilene",
+    "name": "Midilli",
+    "type": "port",
+    "terminal": [
+      39.1044,
+      26.5621
+    ],
+    "seaGate": [
+      39.101725,
+      26.563869
+    ],
+    "intensity": 0.7,
+    "unlockCost": 30000,
+    "country": "GR"
+  },
+  "cesme": {
+    "id": "cesme",
+    "name": "Çeşme",
+    "type": "port",
+    "terminal": [
+      38.325,
+      26.295556
+    ],
+    "seaGate": [
+      38.323,
+      26.27
+    ],
+    "intensity": 0.62,
+    "unlockCost": 20000,
+    "country": "TR"
+  },
+  "chios": {
+    "id": "chios",
+    "name": "Sakız",
+    "type": "port",
+    "terminal": [
+      38.36972,
+      26.13785
+    ],
+    "seaGate": [
+      38.3685,
+      26.153
+    ],
+    "intensity": 0.66,
+    "unlockCost": 25000,
+    "country": "GR"
+  },
+  "istanbul": {
+    "id": "istanbul",
+    "name": "İstanbul",
+    "type": "airport",
+    "terminal": [
+      41.2753,
+      28.7519
+    ]
+  },
+  "athens": {
+    "id": "athens",
+    "name": "Atina",
+    "type": "airport",
+    "terminal": [
+      37.9364,
+      23.9475
+    ]
+  },
+  "balikesir": {
+    "id": "balikesir",
+    "name": "Balıkesir",
+    "type": "road_terminal",
+    "terminal": [
+      39.676736,
+      27.942364
+    ],
+    "intensity": 0.22,
+    "unlockCost": 10000,
+    "country": "TR"
+  }
 }
