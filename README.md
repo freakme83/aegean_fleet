@@ -46,6 +46,9 @@ Balıkesir yolcuları Ayvalık üzerinden deniz hatlarına, deniz hatlarından g
 - Vazgeçen her yolcu €0,50 hizmet telafisi ve terminal hizmet güveni kaybı oluşturur.
 - Başarılı taşımalar hizmet güvenini geri kazandırır; güven ayrıca oyun günü başına bir puan kendiliğinden toparlanır.
 - Aktarmalı talep, doğrudan talebin sınırlı bir bölümüdür ve devam hatlarında çalışan araç yoksa daha da azalır.
+- Bir hedefe birden fazla aktarmalı güzergâh varsa yolcular; seyahat süresi, bilet toplamı, kuyruk, aktif kapasite ve hizmet güvenine göre koridorlara ağırlıklı olarak dağılır.
+- Yeni gelen yolcular yoğunlaşan veya hizmet verilmeyen koridordan çalışan alternatife kayar; tercih tamamen deterministik olmadığı için makul ikinci güzergâh da yolcu alır.
+- Bekleyen gruplar güzergâh kararlarını saatte bir yeniden değerlendirir; ani salınımı önlemek için kuyruğun en fazla `%20`si bir değerlendirmede koridor değiştirir.
 - Yeni terminal talebi dört oyun gününde `%30 → %55 → %80 → %100` şeklinde açılır.
 - Liman satın alma ekranı tahmini saatlik talebi, önerilen kapasiteyi ve mevcut uygun kapasiteyi gösterir.
 
