@@ -24,7 +24,6 @@ export class RouteEngine {
   }
 
   getRoute({ mode, origin, destination }) {
-    if (mode === 'air') return this.createAirRoute(origin, destination);
     const directId = `${origin}-${destination}`;
     const reverseId = `${destination}-${origin}`;
     const direct = this.routeData.routes[directId];
@@ -33,6 +32,7 @@ export class RouteEngine {
     if (reverse && reverse.mode === mode) {
       return { ...structuredClone(reverse), id: directId, origin, destination, waypoints: [...reverse.waypoints].reverse(), nodePath: reverse.nodePath ? [...reverse.nodePath].reverse() : undefined };
     }
+    if (mode === 'air') return this.createAirRoute(origin, destination);
     throw new Error(`No ${mode} route from ${origin} to ${destination}`);
   }
 
