@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "serve": "python3 -m http.server 8080",
-    "generate:routes": "node tools/generate-sea-routes.mjs"
+    "generate:routes": "node tools/generate-sea-routes.mjs",
+    "test": "node tests/demand-balance.test.mjs"
   }
 }

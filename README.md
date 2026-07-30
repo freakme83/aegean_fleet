@@ -36,3 +36,16 @@ Rotaları düzenlemek için `/tools/route-editor.html` kullanılabilir.
 - İki terminal de açıldığında tanımlı bağlantı ücretsiz ve otomatik etkinleşir.
 
 Balıkesir yolcuları Ayvalık üzerinden deniz hatlarına, deniz hatlarından gelen yolcular da Ayvalık üzerinden Balıkesir'e aktarma yapabilir.
+
+## Talep ve hizmet güveni
+
+- Doğrudan hatlarda sakin dönemlerde de asgari yolcu akışı korunur.
+- Kuyruk üç araç kapasitesini geçtiğinde yeni talep yavaşlar, beş araç kapasitesinde durur.
+- Ortalama beş saatten uzun bekleyen yolcular kademeli olarak vazgeçer.
+- Vazgeçen her yolcu €0,50 hizmet telafisi ve terminal hizmet güveni kaybı oluşturur.
+- Başarılı taşımalar hizmet güvenini geri kazandırır; güven ayrıca oyun günü başına bir puan kendiliğinden toparlanır.
+- Aktarmalı talep, doğrudan talebin sınırlı bir bölümüdür ve devam hatlarında çalışan araç yoksa daha da azalır.
+- Yeni terminal talebi dört oyun gününde `%30 → %55 → %80 → %100` şeklinde açılır.
+- Liman satın alma ekranı tahmini saatlik talebi, önerilen kapasiteyi ve mevcut uygun kapasiteyi gösterir.
+
+Talep dengeleme kontrollerini çalıştırmak için `npm test` kullanılabilir.
