@@ -22,3 +22,14 @@ Harita tabanlı, mevsimsel talep ve filo ekonomisi prototipi.
 ## Geliştirme araçları
 
 Rotaları düzenlemek için `/tools/route-editor.html` kullanılabilir.
+
+## Karayolu genişlemesi
+
+- Balıkesir Otogarı: €10.000
+- Balıkesir ↔ Ayvalık karayolu bağlantısı
+- Minibüs: 20 yolcu
+- Otobüs: 50 yolcu
+- Karayolu waypointleri `/tools/route-editor.html` üzerinden sarı yollar izlenerek düzenlenebilir.
+- İki terminal de açıldığında tanımlı bağlantı ücretsiz ve otomatik etkinleşir.
+
+Balıkesir yolcuları Ayvalık üzerinden deniz hatlarına, deniz hatlarından gelen yolcular da Ayvalık üzerinden Balıkesir'e aktarma yapabilir.
