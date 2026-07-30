@@ -8,11 +8,14 @@ const routeData = JSON.parse(await readFile(new URL('../data/routes.json', impor
 const road = routeData.routes['izmir-cesme'];
 
 assert.equal(road.mode, 'road');
-assert.equal(road.distanceKm, 80.6);
+assert.equal(road.distanceKm, 93.7);
 assert.equal(road.durationMinutes, 115);
-assert.equal(road.source, 'generated-road-route-pending-editor-review');
-assert.equal(road.waypoints.length, 9);
+assert.equal(road.source, 'manual-road-route-editor');
+assert.equal(road.waypoints.length, 31);
 assert.deepEqual(road.waypoints[0], ports.izmir.terminal);
+assert.deepEqual(road.waypoints[1], [38.286703, 27.144127]);
+assert.deepEqual(road.waypoints[12], [38.318225, 26.796341]);
+assert.deepEqual(road.waypoints.at(-2), [38.315532, 26.305733]);
 assert.deepEqual(road.waypoints.at(-1), ports.cesme.terminal);
 
 const engine = new RouteEngine({ nodes: ports, routeData });
